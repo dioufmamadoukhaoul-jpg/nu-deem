@@ -585,6 +585,8 @@
   .settings-actions{display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;}
   .settings-actions .mode-btn{flex:none; min-width:auto; background:#fff;}
   .settings-status{margin-top:10px; font-size:12.5px; color:var(--vert-baobab); min-height:1em;}
+  .settings-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:520px){ .settings-row{grid-template-columns:1fr;} }
 
   footer{
     background:var(--indigo-900); color:#b9c0dd;
@@ -861,8 +863,67 @@
       <p>Échangez avec les autres utilisateurs de Ñu Déem : questions, retours d'expérience sur un trajet, suggestions d'amélioration.</p>
     </div>
     <div class="discussion-card" id="discussion-card">
-      <p class="discussion-note">💬 Connectez-vous avec votre compte GitHub pour laisser un commentaire. Les échanges sont publics et propulsés par <b>Giscus</b>.</p>
+      <p class="discussion-note">💬 Cet espace utilise <b>Giscus</b>, un module de discussion gratuit basé sur GitHub Discussions. Il doit être activé une fois par le créateur de l'application (dépôt GitHub public + Discussions activées) — tant que ce n'est pas fait, la discussion n'apparaît pas encore ci-dessous.</p>
       <div id="giscus-container"></div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="discussion-section" id="conducteurs">
+    <div class="transit-head">
+      <h2>Espace conducteurs</h2>
+      <p>Vous conduisez un véhicule (sept-place, car, taxi, voiture personnelle) sur un trajet régulier ? Proposez-le ici pour que d'autres utilisateurs puissent vous trouver.</p>
+    </div>
+    <div class="discussion-card">
+      <p class="discussion-note" id="drivers-note">🚘 Les annonces sont publiées publiquement sur GitHub Discussions (dépôt <code>geomat</code>) — tant que la catégorie « Conducteurs » n'y est pas créée, utilisez le bouton « Copier l'annonce » pour la partager où vous le souhaitez.</p>
+
+      <label class="settings-label">Type de véhicule
+        <select id="drv-type">
+          <option>Voiture particulière</option>
+          <option>Sept-place / break</option>
+          <option>Minibus / Ndiaga Ndiaye</option>
+          <option>Car</option>
+          <option>Taxi</option>
+          <option>Moto</option>
+        </select>
+      </label>
+      <div class="settings-row">
+        <label class="settings-label">Couleur du véhicule
+          <input type="text" id="drv-color" placeholder="Ex. blanche">
+        </label>
+        <label class="settings-label">Places disponibles
+          <input type="number" id="drv-seats" min="1" max="30" value="3">
+        </label>
+      </div>
+      <div class="settings-row">
+        <label class="settings-label">Départ
+          <input type="text" id="drv-from" placeholder="Ex. Dakar, gare routière Pompiers">
+        </label>
+        <label class="settings-label">Arrivée
+          <input type="text" id="drv-to" placeholder="Ex. Saint-Louis, gare routière">
+        </label>
+      </div>
+      <label class="settings-label">Arrêts intermédiaires (optionnel)
+        <input type="text" id="drv-stops" placeholder="Ex. Thiès, Louga">
+      </label>
+      <label class="settings-label">Jour et heure de départ
+        <input type="text" id="drv-when" placeholder="Ex. tous les jours vers 7h">
+      </label>
+      <label class="settings-label">Comment vous contacter (à vous de choisir ce que vous rendez public)
+        <input type="text" id="drv-contact" placeholder="Ex. WhatsApp, page Facebook…">
+      </label>
+      <p class="discussion-note" style="background:#fbeee2;color:#7a4326;">⚠️ Ne partagez ici que ce que vous acceptez de rendre public. Évitez les numéros de téléphone personnels si possible — préférez un contact professionnel ou une page publique.</p>
+
+      <div class="settings-actions">
+        <button class="go-btn" id="drv-publish">Publier via GitHub Discussions ↗</button>
+        <button class="mode-btn" id="drv-copy" type="button">📋 Copier l'annonce</button>
+      </div>
+      <p class="settings-status" id="drv-status"></p>
+
+      <p class="discussion-note" style="margin-top:18px;">Voir les annonces déjà publiées :
+        <a href="#" id="drv-see-all" target="_blank" rel="noopener" style="color:var(--terre-cuite-dark); font-weight:600;">ouvrir la liste sur GitHub ↗</a>
+      </p>
     </div>
   </section>
 
@@ -899,6 +960,7 @@
   <a href="#transports" data-target="transports"><span class="nav-ic">🚌</span>Bus</a>
   <a href="#lexique" data-target="lexique"><span class="nav-ic">🗣️</span>Langues</a>
   <a href="#discussion" data-target="discussion"><span class="nav-ic">💬</span>Chat</a>
+  <a href="#conducteurs" data-target="conducteurs"><span class="nav-ic">🚘</span>Conduct.</a>
   <a href="#parametres" data-target="parametres"><span class="nav-ic">⚙️</span>Réglages</a>
 </nav>
 
@@ -1654,10 +1716,14 @@ async function computeRoute(){
   document.getElementById("track-btn").disabled = false;
 
   if(p.osrm){
+    const routeKind = {foot:"routed-foot/route/v1/foot", bike:"routed-bike/route/v1/bike", car:"routed-car/route/v1/driving"}[p.osrm];
+    const url = `https://routing.openstreetmap.de/${routeKind}/${dep.lon},${dep.lat};${arr.lon},${arr.lat}?overview=full&geometries=geojson&steps=true`;
     try{
-      const routeKind = {foot:"routed-foot/route/v1/foot", bike:"routed-bike/route/v1/bike", car:"routed-car/route/v1/driving"}[p.osrm];
-      const url = `https://routing.openstreetmap.de/${routeKind}/${dep.lon},${dep.lat};${arr.lon},${arr.lat}?overview=full&geometries=geojson&steps=true`;
-      const res = await fetch(url);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(()=>controller.abort(), 12000);
+      const res = await fetch(url, {signal:controller.signal});
+      clearTimeout(timeoutId);
+      if(!res.ok) throw new Error(`service de routage indisponible (code ${res.status})`);
       const data = await res.json();
       if(data.code==="Ok" && data.routes && data.routes[0]){
         const route = data.routes[0];
@@ -1666,10 +1732,21 @@ async function computeRoute(){
         const coords = route.geometry.coordinates.map(c=>[c[1],c[0]]);
         renderResults({dep, arr, distKm:distKmReal, durationHOverride:durationHReal, p, isReal:true, steps:route.legs[0].steps});
         drawRouteOnMap(dep, arr, strokeColor, null, p.icon, coords);
+        storeGuidanceSteps(route.legs[0].steps);
+      } else {
+        throw new Error(data.message || "aucun itinéraire trouvé sur les routes/chemins connus à cet endroit");
       }
     }catch(e){
-      // Silencieux : l'estimation à vol d'oiseau déjà affichée reste visible.
+      guidanceSteps = [];
+      const reason = e.name==="AbortError" ? "le service de routage n'a pas répondu à temps" : (e.message || "erreur réseau");
+      document.getElementById("results").insertAdjacentHTML("beforeend",
+        `<div class="warn">⚠️ Itinéraire réel indisponible pour l'instant (${esc(reason)}) — l'estimation affichée ci-dessus est à vol d'oiseau, donc potentiellement différente du terrain réel.
+         <button class="mini-speak" id="retry-osrm" style="border-radius:8px;width:auto;padding:3px 10px;font-size:11px;">Réessayer</button></div>`);
+      const retryBtn = document.getElementById("retry-osrm");
+      if(retryBtn) retryBtn.addEventListener("click", ()=>computeRoute());
     }
+  } else {
+    guidanceSteps = [];
   }
 }
 
@@ -1741,6 +1818,7 @@ const SCREEN_GROUPS = {
   transports: ["transports","transports-regions"],
   lexique: ["lexique"],
   discussion: ["discussion"],
+  conducteurs: ["conducteurs"],
   parametres: ["parametres"],
   confidentialite: ["confidentialite"],
 };
@@ -1795,22 +1873,39 @@ function bearingToCardinal(deg){
 const guideStatus = document.getElementById("guide-status");
 const locateBtn = document.getElementById("locate-btn");
 const trackBtn = document.getElementById("track-btn");
+let accuracyCircle = null;
 
 locateBtn.addEventListener("click", ()=>{
   if(!("geolocation" in navigator)){
     guideStatus.innerHTML = "La géolocalisation n'est pas disponible sur cet appareil ou ce navigateur.";
     return;
   }
-  guideStatus.innerHTML = "Localisation en cours…";
+  guideStatus.innerHTML = "Localisation en cours… (peut prendre quelques secondes en extérieur, plus longtemps en intérieur)";
   navigator.geolocation.getCurrentPosition(pos=>{
-    const {latitude, longitude} = pos.coords;
+    const {latitude, longitude, accuracy} = pos.coords;
     placeUserMarker(latitude, longitude);
-    map.setView([latitude, longitude], 11);
-    guideStatus.innerHTML = "Position trouvée — vous êtes affiché en bleu sur la carte.";
+    if(accuracyCircle) map.removeLayer(accuracyCircle);
+    accuracyCircle = L.circle([latitude, longitude], {radius:accuracy, color:"#2f7dff", weight:1, fillOpacity:0.08}).addTo(map);
+    map.setView([latitude, longitude], 15);
+    guideStatus.innerHTML = `Position trouvée (précision ≈ ${Math.round(accuracy)} m) — vous êtes affiché en bleu sur la carte.`;
   }, err=>{
-    guideStatus.innerHTML = `Localisation impossible (${err.message}). Vérifiez que vous avez autorisé l'accès à la position, et que la page est ouverte en HTTPS.`;
-  }, {enableHighAccuracy:true, timeout:10000});
+    guideStatus.innerHTML = `Localisation impossible (${err.message}). Vérifiez que vous avez autorisé l'accès à la position dans les réglages du navigateur/téléphone, que le GPS est activé, et que la page est ouverte en HTTPS.`;
+  }, {enableHighAccuracy:true, timeout:20000, maximumAge:0});
 });
+
+/* ---------------- GUIDAGE PAS-À-PAS EN DIRECT (annonce instantanée à chaque changement de direction) ---------------- */
+let guidanceSteps = [];
+function storeGuidanceSteps(steps){
+  guidanceSteps = (steps||[]).filter(s=>s.maneuver && s.maneuver.location).map(s=>({
+    lat: s.maneuver.location[1], lon: s.maneuver.location[0],
+    text: `${maneuverText(s.maneuver)} ${s.name && s.name.length ? s.name : ""}`.trim(),
+    announced: false
+  }));
+}
+// Rayon de déclenchement de l'annonce : plus large en voiture/vélo (on va plus vite) qu'à pied.
+function announceRadiusFor(mode){
+  return mode==="voiture" ? 0.09 : mode==="velo" ? 0.05 : 0.025; // km
+}
 
 trackBtn.addEventListener("click", function(){
   if(watchId){
@@ -1830,29 +1925,52 @@ trackBtn.addEventListener("click", function(){
 
   let lastVoiceAt = 0;
   watchId = navigator.geolocation.watchPosition(pos=>{
-    const {latitude, longitude} = pos.coords;
+    const {latitude, longitude, accuracy} = pos.coords;
     placeUserMarker(latitude, longitude);
+    if(accuracyCircle) map.removeLayer(accuracyCircle);
+    accuracyCircle = L.circle([latitude, longitude], {radius:accuracy, color:"#2f7dff", weight:1, fillOpacity:0.08}).addTo(map);
     const here = {lat:latitude, lon:longitude};
     const distLeft = haversine(here, currentDestination);
     const dir = bearingToCardinal(bearing(here, currentDestination));
     const voiceOn = document.getElementById("voice-guide-toggle").checked;
+
+    // Annonce INSTANTANÉE dès qu'on approche d'un virage/changement de direction du trajet réel,
+    // qu'elle que soit la fréquence des mises à jour GPS — pas d'attente, pas de minuterie.
+    let maneuverAnnounced = false;
+    if(voiceOn && guidanceSteps.length){
+      const radius = announceRadiusFor(currentMode);
+      for(const step of guidanceSteps){
+        if(step.announced) continue;
+        const d = haversine(here, step);
+        if(d <= radius){
+          speak(step.text);
+          step.announced = true;
+          maneuverAnnounced = true;
+          guideStatus.innerHTML = `🧭 <b>${esc(step.text)}</b> — étape suivie automatiquement.`;
+          lastVoiceAt = Date.now();
+          break;
+        }
+      }
+    }
+
     if(distLeft < 0.3){
       guideStatus.innerHTML = `🏁 Vous êtes arrivé près de <b>${currentDestination.label}</b> !`;
       if(voiceOn && Date.now()-lastVoiceAt>8000){ speak(`Vous êtes arrivé près de ${currentDestination.label}.`); lastVoiceAt=Date.now(); }
-    } else {
+    } else if(!maneuverAnnounced){
       const distTxt = distLeft < 1 ? `${Math.round(distLeft*1000)} m` : `${distLeft.toFixed(1)} km`;
-      guideStatus.innerHTML = `<b>${distTxt}</b> restants jusqu'à ${currentDestination.label}, en direction du <b>${dir}</b>.`;
-      if(voiceOn && Date.now()-lastVoiceAt>20000){
+      guideStatus.innerHTML = `<b>${distTxt}</b> restants jusqu'à ${currentDestination.label}, en direction du <b>${dir}</b> (précision GPS ≈ ${Math.round(accuracy)} m).`;
+      if(voiceOn && !guidanceSteps.length && Date.now()-lastVoiceAt>20000){
+        // Pas d'étapes détaillées disponibles (itinéraire à vol d'oiseau) : on retombe sur l'annonce générale.
         speak(`${distTxt} restants, direction ${dir}.`);
         lastVoiceAt = Date.now();
       }
     }
   }, err=>{
-    guideStatus.innerHTML = `Suivi interrompu : ${err.message}`;
+    guideStatus.innerHTML = `Suivi interrompu : ${err.message}. Vérifiez le GPS et l'autorisation de localisation.`;
     trackBtn.classList.remove("active");
     trackBtn.textContent = "🧭 Suivre mon trajet en direct";
     watchId = null;
-  }, {enableHighAccuracy:true, maximumAge:5000, timeout:15000});
+  }, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
 });
 
 /* ---------------- INSTALLATION (PWA) ---------------- */
@@ -1876,10 +1994,10 @@ document.getElementById("install-btn").addEventListener("click", async ()=>{
 // qui affiche les discussions d'un dépôt GitHub public. Tant que le créateur
 // n'a pas renseigné son dépôt ci-dessous, seul le message d'explication s'affiche.
 const GISCUS_CONFIG = {
-  repo: "dioufmamadoukhaoul-jpg/nu-deem",
-  repoId: "R_kgDOTiYNGQ",
+  repo: "dioufmamadoukhaoul-jpg/geomat",
+  repoId: "R_kgDOTiZNSw",
   category: "General",
-  categoryId: "DIC_kwDOTiYNGc4DB4S9",
+  categoryId: "DIC_kwDOTiZNS84DB4QP",
 };
 let giscusLoaded = false;
 function loadGiscus(){
@@ -1903,6 +2021,69 @@ function loadGiscus(){
   s.async = true;
   container.appendChild(s);
 }
+
+/* ---------------- ESPACE CONDUCTEURS ---------------- */
+// Réutilise le même dépôt GitHub que la Discussion. Catégorie recommandée à créer : "Conducteurs".
+// Dépôt dédié aux annonces conducteurs (distinct de la Discussion générale ci-dessus).
+const DRIVERS_CONFIG = { repo: "dioufmamadoukhaoul-jpg/geomat" };
+  const DRIVERS_CATEGORY_SLUG = "conducteurs"; // à créer dans Discussions → Catégories sur le dépôt geomat
+
+function buildDriverAnnouncement(){
+  const type = document.getElementById("drv-type").value;
+  const color = document.getElementById("drv-color").value.trim();
+  const seats = document.getElementById("drv-seats").value;
+  const from = document.getElementById("drv-from").value.trim();
+  const to = document.getElementById("drv-to").value.trim();
+  const stops = document.getElementById("drv-stops").value.trim();
+  const when = document.getElementById("drv-when").value.trim();
+  const contact = document.getElementById("drv-contact").value.trim();
+  if(!from || !to){ return null; }
+  const title = `Trajet ${from} → ${to} (${type})`;
+  const lines = [
+    `🚘 Véhicule : ${type}${color ? " — " + color : ""}`,
+    `👥 Places disponibles : ${seats || "n.c."}`,
+    `📍 Départ : ${from}`,
+    `🏁 Arrivée : ${to}`,
+  ];
+  if(stops) lines.push(`⏸️ Arrêts : ${stops}`);
+  if(when) lines.push(`🕒 Horaire : ${when}`);
+  if(contact) lines.push(`📞 Contact : ${contact}`);
+  return {title, body: lines.join("\n")};
+}
+
+document.getElementById("drv-publish").addEventListener("click", ()=>{
+  const ann = buildDriverAnnouncement();
+  const status = document.getElementById("drv-status");
+  if(!ann){ status.textContent = "Merci de renseigner au moins le départ et l'arrivée."; return; }
+  if(!DRIVERS_CONFIG.repo){
+    status.textContent = "Publication GitHub pas encore configurée — utilisez « Copier l'annonce » en attendant.";
+    return;
+  }
+  const url = `https://github.com/${DRIVERS_CONFIG.repo}/discussions/new?category=${encodeURIComponent(DRIVERS_CATEGORY_SLUG)}&title=${encodeURIComponent(ann.title)}&body=${encodeURIComponent(ann.body)}`;
+  window.open(url, "_blank", "noopener");
+});
+
+document.getElementById("drv-copy").addEventListener("click", async ()=>{
+  const ann = buildDriverAnnouncement();
+  const status = document.getElementById("drv-status");
+  if(!ann){ status.textContent = "Merci de renseigner au moins le départ et l'arrivée."; return; }
+  const text = `${ann.title}\n${ann.body}`;
+  try{
+    await navigator.clipboard.writeText(text);
+    status.textContent = "Annonce copiée ✓ — collez-la où vous le souhaitez (WhatsApp, Facebook, etc.).";
+  }catch(e){
+    status.textContent = "Impossible de copier automatiquement — sélectionnez et copiez le texte ci-dessous :\n\n" + text;
+  }
+});
+
+document.getElementById("drv-see-all").addEventListener("click", (e)=>{
+  if(!DRIVERS_CONFIG.repo){
+    e.preventDefault();
+    document.getElementById("drv-status").textContent = "Pas encore de dépôt GitHub configuré pour afficher la liste.";
+    return;
+  }
+  document.getElementById("drv-see-all").href = `https://github.com/${DRIVERS_CONFIG.repo}/discussions/categories/${DRIVERS_CATEGORY_SLUG}`;
+});
 
 /* ---------------- PARAMÈTRES LOCAUX (enregistrés sur cet appareil uniquement) ---------------- */
 const SETTINGS_KEY = "nudeem_settings_v1";
