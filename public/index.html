@@ -861,7 +861,7 @@
       <p>Échangez avec les autres utilisateurs de Ñu Déem : questions, retours d'expérience sur un trajet, suggestions d'amélioration.</p>
     </div>
     <div class="discussion-card" id="discussion-card">
-      <p class="discussion-note">💬 Cet espace utilise <b>Giscus</b>, un module de discussion gratuit basé sur GitHub Discussions. Il doit être activé une fois par le créateur de l'application (dépôt GitHub public + Discussions activées) — tant que ce n'est pas fait, la discussion n'apparaît pas encore ci-dessous.</p>
+      <p class="discussion-note">💬 Connectez-vous avec votre compte GitHub pour laisser un commentaire. Les échanges sont publics et propulsés par <b>Giscus</b>.</p>
       <div id="giscus-container"></div>
     </div>
   </section>
@@ -1876,10 +1876,10 @@ document.getElementById("install-btn").addEventListener("click", async ()=>{
 // qui affiche les discussions d'un dépôt GitHub public. Tant que le créateur
 // n'a pas renseigné son dépôt ci-dessous, seul le message d'explication s'affiche.
 const GISCUS_CONFIG = {
-  repo: "",        // ex: "mamadoudiouf/nudeem-senegal"
-  repoId: "",
+  repo: "dioufmamadoukhaoul-jpg/nu-deem",
+  repoId: "R_kgDOTiYNGQ",
   category: "General",
-  categoryId: "",
+  categoryId: "DIC_kwDOTiYNGc4DB4S9",
 };
 let giscusLoaded = false;
 function loadGiscus(){
