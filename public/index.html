@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<title>Ñu Déem — Se déplacer au Sénégal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Ñu D%C3%A9em","short_name":"Ñu D%C3%A9em","start_url":".","display":"standalone","background_color":"%23181f38","theme_color":"%23181f38","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27192%27 height=%27192%27%3E%3Crect width=%27192%27 height=%27192%27 rx=%2736%27 fill=%27%23181f38%27/%3E%3Ctext x=%2796%27 y=%27128%27 font-size=%2790%27 text-anchor=%27middle%27 fill=%27%23e8a233%27 font-family=%27sans-serif%27%3EN%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
+<meta name="theme-color" content="#181f38">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ñu Déem">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' fill='%23181f38'/%3E%3Ctext x='90' y='120' font-size='84' text-anchor='middle' fill='%23e8a233' font-family='sans-serif'%3EN%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --indigo-900:#181f38;
+    --indigo-700:#2a3660;
+    --indigo-600:#3a4a82;
+    --sable-050:#faf3e6;
+    --sable-100:#f0e2c8;
+    --sable-200:#e4d0a6;
+    --terre-cuite:#c0512e;
+    --terre-cuite-dark:#9c3f22;
+    --or-sahel:#e8a233;
+    --vert-baobab:#3c6e49;
+    --encre:#221b13;
+    --blanc-casse:#fffaf1;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--sable-050);
+    background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxNDAnIGhlaWdodD0nMTQwJz4KPGcgc3Ryb2tlPScjMmEzNjYwJyBzdHJva2Utd2lkdGg9JzEnIGZpbGw9J25vbmUnIG9wYWNpdHk9JzAuMDknPgo8bGluZSB4MT0nMTAnIHkxPScxMCcgeDI9JzcwJyB5Mj0nNDAnLz4KPGxpbmUgeDE9JzcwJyB5MT0nNDAnIHgyPScxMzAnIHkyPScxNScvPgo8bGluZSB4MT0nNzAnIHkxPSc0MCcgeDI9JzU1JyB5Mj0nMTAwJy8+CjxsaW5lIHgxPSc1NScgeTE9JzEwMCcgeDI9JzEyMCcgeTI9JzEyNScvPgo8bGluZSB4MT0nNTUnIHkxPScxMDAnIHgyPSc1JyB5Mj0nMTIwJy8+CjxsaW5lIHgxPScxMCcgeTE9JzEwJyB4Mj0nNTUnIHkyPScxMDAnLz4KPC9nPgo8ZyBmaWxsPScjYzA1MTJlJyBvcGFjaXR5PScwLjMyJz4KPGNpcmNsZSBjeD0nMTAnIGN5PScxMCcgcj0nMi42Jy8+CjxjaXJjbGUgY3g9JzcwJyBjeT0nNDAnIHI9JzMnLz4KPGNpcmNsZSBjeD0nMTMwJyBjeT0nMTUnIHI9JzIuNicvPgo8Y2lyY2xlIGN4PSc1NScgY3k9JzEwMCcgcj0nMycvPgo8Y2lyY2xlIGN4PScxMjAnIGN5PScxMjUnIHI9JzIuNicvPgo8Y2lyY2xlIGN4PSc1JyBjeT0nMTIwJyByPScyLjYnLz4KPC9nPgo8L3N2Zz4=");
+    background-size:140px 140px;
+    color:var(--encre);
+    font-family:var(--font-body);
+    line-height:1.5;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(ellipse at 85% -10%, rgba(232,162,51,0.28), transparent 55%),
+      linear-gradient(160deg, var(--indigo-900) 0%, #202a4d 62%, var(--indigo-700) 100%);
+    color:var(--blanc-casse);
+    padding:52px 0 40px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:6px solid var(--terre-cuite);
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.055) 1.4px, transparent 1.4px);
+    background-size: 22px 22px;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .hero-inner{position:relative; display:flex; flex-wrap:wrap; gap:28px; align-items:flex-end; justify-content:space-between;}
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--or-sahel);
+    margin:0 0 10px;
+  }
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 54px);
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+    line-height:1.02;
+  }
+  .title span{color:var(--or-sahel);}
+  .tagline{
+    font-size:17px;
+    max-width:480px;
+    color:#dfe2f0;
+    margin:0;
+  }
+  .hero-meta{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:#b9c0dd;
+    text-align:right;
+    line-height:1.7;
+  }
+  .hero-meta b{color:var(--blanc-casse); font-weight:600;}
+  .install-btn{
+    margin-top:12px;
+    background:var(--or-sahel); color:var(--indigo-900); border:none;
+    padding:9px 16px; border-radius:9px; font-family:var(--font-display);
+    font-weight:600; font-size:13px; cursor:pointer;
+  }
+  .install-btn:hover{background:#f0b452;}
+  .install-note{font-size:11px; color:#9aa3c9; margin-top:6px; max-width:220px; text-align:right;}
+
+  /* ---------- AVANT-PROPOS ---------- */
+  .foreword{
+    background:#fff;
+    border:1px solid #ece0c4;
+    border-left:5px solid var(--or-sahel);
+    border-radius:14px;
+    padding:20px 26px;
+    margin:26px 0 0;
+    position:relative;
+  }
+  .foreword-badge{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.09em;
+    color:var(--terre-cuite-dark);
+    background:var(--sable-100);
+    padding:3px 10px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+  .foreword p{font-size:14px; color:#4a4230; line-height:1.65; margin:0 0 10px;}
+  .foreword p:last-child{margin-bottom:0;}
+
+  /* ---------- SPLASH SCREEN ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:999;
+    background:linear-gradient(160deg, var(--indigo-900) 0%, #202a4d 62%, var(--indigo-700) 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:opacity .5s ease, visibility .5s ease;
+  }
+  #splash.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  #splash .splash-logo{
+    font-family:var(--font-display); font-weight:700; font-size:38px; color:var(--blanc-casse);
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  #splash .splash-logo span{color:var(--or-sahel);}
+  #splash .splash-sub{font-family:var(--font-mono); font-size:12px; color:#b9c0dd; margin-top:10px; letter-spacing:0.08em; text-transform:uppercase;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.55;}}
+
+  /* ---------- COQUILLE D'APPLICATION NATIVE (un écran à la fois) ---------- */
+  html{
+    scroll-behavior:smooth;
+    overscroll-behavior-y:none; /* évite le rebond "pull-to-refresh" façon web */
+  }
+  body{
+    overscroll-behavior-y:none;
+    -webkit-tap-highlight-color:transparent;
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
+  }
+  button, a, input, select, textarea{ touch-action:manipulation; } /* supprime le délai de tap mobile */
+
+  section[id]{ display:none; }
+  section[id].screen-active{ display:block; animation:screenIn .22s ease; }
+  @keyframes screenIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+  .page-break{ display:none; } /* inutile en mode écran unique — reste actif seulement à l'impression */
+
+  .app-nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:500;
+    background:var(--blanc-casse);
+    border-top:1px solid #ece0c4;
+    box-shadow:0 -8px 24px -12px rgba(24,31,56,0.25);
+    display:flex; justify-content:space-around;
+    padding:6px 2px calc(6px + env(safe-area-inset-bottom));
+  }
+  .app-nav a{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    text-decoration:none; color:#a3966f; flex:1; min-width:0;
+    font-family:var(--font-body); font-size:9.5px; font-weight:600;
+    padding:6px 2px; border-radius:10px; transition:color .15s ease, background .15s ease;
+  }
+  .app-nav a .nav-ic{font-size:18px;}
+  .app-nav a.active{color:var(--terre-cuite-dark); background:var(--sable-100);}
+
+  /* ---------- SEARCH PANEL ---------- */
+  .search-card{
+    background:var(--blanc-casse);
+    border-radius:18px;
+    margin-top:-34px;
+    position:relative;
+    z-index:3;
+    box-shadow:0 22px 48px -18px rgba(24,31,56,0.35);
+    border:1px solid #ece0c4;
+    padding:26px 26px 22px;
+  }
+  .search-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap:16px;
+    align-items:end;
+  }
+  @media (max-width: 760px){ .search-grid{grid-template-columns:1fr;} }
+  .field label{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.09em;
+    color:#8a7c5c;
+    margin-bottom:6px;
+  }
+  select{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid #e2d5b4;
+    background:var(--sable-050) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="9"><path d="M1 1l6 6 6-6" stroke="%23221b13" stroke-width="2" fill="none" stroke-linecap="round"/></svg>') no-repeat right 14px center;
+    appearance:none;
+    font-family:var(--font-body);
+    font-size:15px;
+    font-weight:500;
+    color:var(--encre);
+    cursor:pointer;
+  }
+  select:focus, button:focus-visible{outline:3px solid var(--or-sahel); outline-offset:1px;}
+
+  .autocomplete-field{position:relative;}
+  .ac-input-row{display:flex; gap:8px;}
+  .ac-input-row input[type="text"]{
+    flex:1; width:100%; padding:12px 14px; border-radius:10px;
+    border:1.5px solid #e2d5b4; background:var(--sable-050);
+    font-family:var(--font-body); font-size:15px; font-weight:500; color:var(--encre);
+  }
+  .ac-input-row input:focus{outline:3px solid var(--or-sahel); outline-offset:1px;}
+  .mini-locate{
+    flex-shrink:0; width:44px; border:1.5px solid #e2d5b4; background:#fff;
+    border-radius:10px; font-size:17px; cursor:pointer;
+  }
+  .mini-locate:hover{background:var(--sable-100);}
+  .suggestions{
+    position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:50;
+    background:#fff; border:1px solid #e2d5b4; border-radius:10px;
+    box-shadow:0 14px 30px -12px rgba(24,31,56,0.3);
+    max-height:220px; overflow-y:auto; display:none;
+  }
+  .suggestions.show{display:block;}
+  .suggestions .sug-item{padding:10px 14px; font-size:13.5px; cursor:pointer; border-bottom:1px solid #f4ecd8;}
+  .suggestions .sug-type{font-family:var(--font-mono); font-size:11px; color:var(--terre-cuite-dark); font-weight:600; margin-right:4px;}
+  .suggestions .sug-item:last-child{border-bottom:none;}
+  .suggestions .sug-item:hover{background:var(--sable-050);}
+  .suggestions .sug-empty{padding:10px 14px; font-size:13px; color:#a3966f;}
+
+  .quick-senegal{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-top:14px; padding-top:14px; border-top:1px dashed #e2d5b4;
+  }
+  .quick-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#8a7c5c;}
+  .quick-senegal select{width:auto; flex:1; min-width:160px; padding:8px 12px; font-size:13px;}
+
+  .mode-btn.sn-only{display:none;}
+  .mode-btn.sn-only.show{display:flex;}
+  .go-btn{
+    background:var(--terre-cuite);
+    color:var(--blanc-casse);
+    border:none;
+    padding:12.5px 26px;
+    border-radius:10px;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .go-btn:hover{background:var(--terre-cuite-dark);}
+  .go-btn:active{transform:scale(0.98);}
+
+  .mode-row{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+  .mode-btn{
+    flex:1;
+    min-width:140px;
+    display:flex; align-items:center; gap:9px; justify-content:center;
+    padding:11px 14px;
+    border-radius:10px;
+    border:1.5px solid #e2d5b4;
+    background:#fff;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:14px;
+    color:#7a6c4d;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .mode-btn .ic{font-size:18px;}
+  .mode-btn.active{
+    border-color:transparent;
+    color:#fff;
+  }
+  .mode-btn[data-mode="pied"].active{background:var(--vert-baobab);}
+  .mode-btn[data-mode="velo"].active{background:#5a8f6b;}
+  .mode-btn[data-mode="voiture"].active{background:var(--indigo-700);}
+  .mode-btn[data-mode="car"].active{background:var(--or-sahel); color:var(--encre);}
+  .mode-btn[data-mode="taxi"].active{background:var(--terre-cuite);}
+  .mode-btn[data-mode="brt"].active{background:#2f7d5c;}
+  .mode-btn[data-mode="ter"].active{background:var(--indigo-700);}
+  .mode-btn[data-mode="urbain"].active{background:#8a5a2e;}
+  .swap-note{font-size:12.5px; color:#a3966f; margin-top:12px;}
+
+  /* ---------- MAIN GRID: map + results ---------- */
+  .main-grid{
+    display:grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap:26px;
+    margin-top:30px;
+    align-items:start;
+  }
+  @media (max-width: 900px){ .main-grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:#fff;
+    border:1px solid #ece0c4;
+    border-radius:18px;
+    padding:20px;
+  }
+  .panel h2{
+    font-family:var(--font-display);
+    font-size:19px;
+    margin:0 0 4px;
+  }
+  .panel .sub{font-size:13px; color:#8a7c5c; margin:0 0 14px;}
+
+  #map{width:100%; height:520px; border-radius:12px; z-index:1;}
+  .rotate-box{
+    display:flex; align-items:center; gap:10px; margin-top:10px;
+    background:var(--sable-050); border-radius:10px; padding:8px 12px;
+  }
+  .rotate-label{font-size:12.5px; color:#5a4f38; white-space:nowrap;}
+  .rotate-box input[type="range"]{flex:1; accent-color:var(--terre-cuite);}
+  #rotate-value{font-family:var(--font-mono); font-size:12px; color:var(--indigo-900); min-width:36px; text-align:right;}
+  .rotate-reset{
+    border:none; background:var(--indigo-900); color:#fff; border-radius:8px;
+    padding:6px 10px; font-size:11.5px; font-family:var(--font-body); font-weight:600; cursor:pointer;
+  }
+  .leaflet-popup-content b{font-family:var(--font-display);}
+  .leaflet-popup-content .pc-communes{font-size:11.5px; color:#6c6248; margin-top:4px; max-width:220px;}
+
+  .guide-box{margin-top:14px; background:var(--sable-050); border-radius:12px; padding:14px;}
+  .guide-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .guide-btn{
+    flex:1; min-width:150px;
+    background:var(--indigo-900); color:#fff; border:none;
+    padding:10px 14px; border-radius:9px; font-family:var(--font-display);
+    font-weight:600; font-size:13px; cursor:pointer;
+  }
+  .guide-btn:hover:not(:disabled){background:var(--indigo-700);}
+  .guide-btn:disabled{opacity:0.45; cursor:not-allowed;}
+  .guide-btn.active{background:var(--vert-baobab);}
+  .guide-status{margin-top:10px; font-size:13px; color:#5a4f38; line-height:1.5;}
+  .guide-status b{color:var(--indigo-900);}
+  .voice-toggle{display:flex; align-items:center; gap:7px; margin-top:10px; font-size:12.5px; color:#5a4f38; cursor:pointer;}
+  .turn-steps-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+  .voice-directions-btn{
+    border:none; background:var(--indigo-900); color:#fff; padding:6px 12px; border-radius:8px;
+    font-family:var(--font-body); font-weight:600; font-size:12px; cursor:pointer;
+  }
+  .voice-directions-btn:hover{background:var(--indigo-700);}
+  .user-dot{
+    width:16px; height:16px; border-radius:50%;
+    background:#2f7dff; border:3px solid #fff; box-shadow:0 0 0 4px rgba(47,125,255,0.35);
+    animation:dotpulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dotpulse{0%,100%{box-shadow:0 0 0 4px rgba(47,125,255,0.35);} 50%{box-shadow:0 0 0 9px rgba(47,125,255,0.12);}}
+
+  /* ---------- RESULTS ---------- */
+  .result-empty{
+    padding:34px 10px;
+    text-align:center;
+    color:#a3966f;
+    font-size:14.5px;
+  }
+  .stat-row{display:flex; gap:10px; margin-bottom:16px;}
+  .stat{
+    flex:1;
+    background:var(--sable-050);
+    border-radius:12px;
+    padding:12px 14px;
+    text-align:center;
+  }
+  .stat .num{font-family:var(--font-mono); font-size:20px; font-weight:600; color:var(--indigo-900);}
+  .stat .lab{font-size:11px; color:#8a7c5c; text-transform:uppercase; letter-spacing:0.06em;}
+  .steps{list-style:none; margin:0; padding:0;}
+  .steps li{
+    display:flex; gap:12px;
+    padding:12px 0;
+    border-top:1px solid #f0e6cd;
+  }
+  .steps li:first-child{border-top:none;}
+  .step-ic{
+    width:32px; height:32px; border-radius:50%;
+    background:var(--sable-100);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; flex-shrink:0;
+  }
+  .step-txt b{display:block; font-size:14px; margin-bottom:2px;}
+  .step-txt p{margin:0; font-size:13px; color:#6c6248;}
+  .phrase-tag{
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:6px;
+    background:#f4e9cf;
+    color:var(--terre-cuite-dark);
+    font-family:var(--font-mono);
+    font-size:12px;
+    padding:3px 6px 3px 8px;
+    border-radius:6px;
+  }
+  .mini-speak{
+    border:none; background:var(--terre-cuite); color:#fff;
+    width:19px; height:19px; border-radius:50%;
+    font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .warn{
+    margin-top:14px;
+    background:#fbeee2;
+    border-left:3px solid var(--terre-cuite);
+    padding:10px 12px;
+    font-size:13px;
+    border-radius:6px;
+    color:#7a4326;
+  }
+  .turn-steps{
+    margin-top:14px; background:var(--sable-050); border-radius:10px; padding:12px 14px;
+    font-size:12.5px; color:#5a4f38;
+  }
+  .turn-steps b{display:block; margin-bottom:6px; color:var(--indigo-900); font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em;}
+  .turn-steps ol{margin:0; padding-left:18px;}
+  .turn-steps li{margin-bottom:5px; line-height:1.4;}
+
+  /* ---------- LEXIQUE ---------- */
+  .lex-section{margin:52px 0 60px;}
+  .lex-head{text-align:center; margin-bottom:26px;}
+  .lex-head h2{
+    font-family:var(--font-display);
+    font-size:clamp(26px,4vw,34px);
+    margin:0 0 8px;
+  }
+  .lex-head p{color:#8a7c5c; font-size:14.5px; max-width:600px; margin:0 auto;}
+
+  .lang-tabs{display:flex; justify-content:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
+  .lang-tab{
+    padding:10px 22px;
+    border-radius:999px;
+    border:1.5px solid #e2d5b4;
+    background:#fff;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:14.5px;
+    color:#7a6c4d;
+    cursor:pointer;
+  }
+  .lang-tab.active{background:var(--indigo-900); border-color:var(--indigo-900); color:#fff;}
+
+  .voice-note{
+    text-align:center; font-size:12px; color:#a3966f; margin:0 0 24px;
+  }
+
+  .lex-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+  }
+  .lex-card{
+    background:#fff;
+    border:1px solid #ece0c4;
+    border-radius:14px;
+    padding:18px 20px;
+  }
+  .lex-card h3{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--terre-cuite);
+    margin:0 0 12px;
+  }
+  .lex-row{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:7px 0; border-top:1px solid #f4ecd8;}
+  .lex-row:first-of-type{border-top:none;}
+  .lex-fr{font-size:13.5px; color:#5a4f38;}
+  .lex-local-wrap{display:flex; align-items:center; gap:7px;}
+  .lex-local-col{display:flex; flex-direction:column; align-items:flex-end;}
+  .lex-local{font-family:var(--font-mono); font-size:13.5px; font-weight:600; color:var(--indigo-900); text-align:right;}
+  .lex-phon{font-size:11px; color:#a3966f; font-style:italic;}
+  .speak-btn{
+    border:none; background:var(--sable-100); color:var(--terre-cuite-dark);
+    width:24px; height:24px; border-radius:50%; cursor:pointer;
+    font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:background .15s ease;
+  }
+  .speak-btn:hover{background:var(--or-sahel); color:#fff;}
+  .lex-note{
+    max-width:760px; margin:22px auto 0; text-align:center;
+    font-size:12.5px; color:#a3966f; font-style:italic;
+  }
+
+  /* ---------- RÉSEAU DÉCORATIF (hero) ---------- */
+  .hero-network{position:absolute; inset:0; opacity:0.55; pointer-events:none;}
+  .hero-network line{stroke:#7d8ac2; stroke-width:1;}
+  .hero-network circle{fill:var(--or-sahel);}
+  .hero-network circle.big{fill:var(--terre-cuite); opacity:0.85;}
+
+  /* ---------- TRANSPORTS URBAINS DE DAKAR ---------- */
+  .transit-section{margin:56px 0 8px;}
+  .transit-head{text-align:center; margin-bottom:26px;}
+  .transit-head h2{font-family:var(--font-display); font-size:clamp(26px,4vw,34px); margin:0 0 8px;}
+  .transit-head p{color:#8a7c5c; font-size:14.5px; max-width:620px; margin:0 auto;}
+  .transit-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:18px;}
+  .transit-card{
+    background:#fff; border:1px solid #ece0c4; border-radius:16px; padding:20px;
+    border-top:4px solid var(--transit-color, var(--indigo-700));
+  }
+  .transit-card .t-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .transit-card .t-ic{
+    width:36px; height:36px; border-radius:10px; background:var(--transit-color, var(--indigo-700));
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;
+  }
+  .transit-card h3{font-family:var(--font-display); font-size:16.5px; margin:0;}
+  .transit-card .t-sub{font-family:var(--font-mono); font-size:11px; color:#8a7c5c; margin:1px 0 0;}
+  .transit-card ul{margin:10px 0 0; padding-left:18px; font-size:13px; color:#5a4f38;}
+  .transit-card ul li{margin-bottom:5px;}
+  .transit-card .t-facts{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .t-fact{background:var(--sable-050); border-radius:8px; padding:6px 10px; font-family:var(--font-mono); font-size:11.5px; color:var(--indigo-900);}
+  .transit-note{max-width:800px; margin:20px auto 0; text-align:center; font-size:12.5px; color:#a3966f; font-style:italic;}
+
+  /* ---------- TRANSPORT DANS LES RÉGIONS ---------- */
+  .region-table-wrap{background:#fff; border:1px solid #ece0c4; border-radius:16px; padding:8px 8px 4px; overflow-x:auto;}
+  table.region-table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px;}
+  table.region-table th{
+    font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
+    color:#8a7c5c; text-align:left; padding:12px 14px; border-bottom:2px solid var(--sable-100);
+  }
+  table.region-table td{padding:11px 14px; border-bottom:1px solid #f4ecd8; color:var(--encre);}
+  table.region-table tr:last-child td{border-bottom:none;}
+  table.region-table td.num{font-family:var(--font-mono); color:var(--indigo-900);}
+  table.region-table td.op{font-size:12.5px; color:#6c6248;}
+
+  /* ---------- SÉPARATEURS DE SECTION (saut de page) ---------- */
+  .page-break{
+    height:1px; margin:44px 0;
+    background:linear-gradient(90deg, transparent, var(--or-sahel) 20%, var(--or-sahel) 80%, transparent);
+    opacity:0.55;
+    position:relative;
+  }
+  .page-break::after{
+    content:"◆"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:var(--sable-050); color:var(--or-sahel); font-size:11px; padding:0 10px;
+  }
+  @media print{
+    section[id]{ display:block !important; animation:none !important; }
+    .page-break{ display:block; page-break-after:always; height:0; margin:0; background:none; }
+    .page-break::after{ content:none; }
+    .app-nav, .install-btn, #splash, .go-btn, .guide-box, .lang-tabs, .mode-row, .search-grid button{ display:none !important; }
+  }
+
+  /* ---------- POLITIQUE DE CONFIDENTIALITÉ ---------- */
+  .privacy-section{margin:0 0 8px;}
+  .privacy-section h2{font-family:var(--font-display); font-size:clamp(24px,4vw,30px); margin:0 0 18px; text-align:center;}
+  .privacy-card{background:#fff; border:1px solid #ece0c4; border-radius:16px; padding:24px 26px;}
+  .privacy-card h3{font-family:var(--font-display); font-size:15px; margin:18px 0 6px; color:var(--indigo-900);}
+  .privacy-card h3:first-child{margin-top:0;}
+  .privacy-card p, .privacy-card li{font-size:13.5px; color:#5a4f38; line-height:1.65; margin:0 0 6px;}
+  .privacy-card ul{margin:6px 0; padding-left:20px;}
+  .privacy-updated{font-family:var(--font-mono); font-size:11px; color:#a3966f; text-align:center; margin-top:16px;}
+
+  /* ---------- DISCUSSION ---------- */
+  .discussion-card{background:#fff; border:1px solid #ece0c4; border-radius:16px; padding:20px;}
+  .discussion-note{font-size:13px; color:#5a4f38; background:var(--sable-050); border-radius:10px; padding:12px 14px; margin:0 0 14px; line-height:1.55;}
+  #giscus-container{min-height:60px;}
+
+  /* ---------- PARAMÈTRES ---------- */
+  .settings-card{background:#fff; border:1px solid #ece0c4; border-radius:16px; padding:20px;}
+  .settings-label{
+    display:block; font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase;
+    letter-spacing:0.06em; color:#8a7c5c; margin-bottom:16px;
+  }
+  .settings-label textarea, .settings-label input{
+    display:block; width:100%; margin-top:6px; padding:10px 12px;
+    border-radius:9px; border:1.5px solid #e2d5b4; background:var(--sable-050);
+    font-family:var(--font-body); font-size:14px; color:var(--encre); resize:vertical;
+  }
+  .settings-actions{display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;}
+  .settings-actions .mode-btn{flex:none; min-width:auto; background:#fff;}
+  .settings-status{margin-top:10px; font-size:12.5px; color:var(--vert-baobab); min-height:1em;}
+
+  footer{
+    background:var(--indigo-900); color:#b9c0dd;
+    padding:26px 0; text-align:center; font-size:12.5px;
+    font-family:var(--font-mono);
+  }
+  footer b{color:var(--or-sahel);}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-logo">Ñu Déem<span>.</span></div>
+  <div class="splash-sub">Chargement de la carte du Sénégal…</div>
+</div>
+
+<header class="hero">
+  <svg class="hero-network" viewBox="0 0 1180 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="60" y1="260" x2="240" y2="120"/>
+    <line x1="240" y1="120" x2="430" y2="200"/>
+    <line x1="240" y1="120" x2="380" y2="40"/>
+    <line x1="430" y1="200" x2="620" y2="90"/>
+    <line x1="430" y1="200" x2="590" y2="270"/>
+    <line x1="620" y1="90" x2="800" y2="150"/>
+    <line x1="620" y1="90" x2="760" y2="30"/>
+    <line x1="800" y1="150" x2="980" y2="80"/>
+    <line x1="800" y1="150" x2="960" y2="240"/>
+    <line x1="980" y1="80" x2="1140" y2="140"/>
+    <line x1="590" y1="270" x2="800" y2="150"/>
+    <circle class="big" cx="60" cy="260" r="6"/>
+    <circle cx="240" cy="120" r="4"/>
+    <circle cx="380" cy="40" r="3.5"/>
+    <circle class="big" cx="430" cy="200" r="6"/>
+    <circle cx="620" cy="90" r="4"/>
+    <circle cx="590" cy="270" r="3.5"/>
+    <circle cx="760" cy="30" r="3.5"/>
+    <circle class="big" cx="800" cy="150" r="6"/>
+    <circle cx="980" cy="80" r="4"/>
+    <circle cx="960" cy="240" r="3.5"/>
+    <circle cx="1140" cy="140" r="4"/>
+  </svg>
+  <div class="wrap hero-inner">
+    <div>
+      <p class="eyebrow">Navigation multimodale · 14 régions · 46 départements</p>
+      <h1 class="title">Ñu Déem<span>.</span></h1>
+      <p class="tagline">« Ñu déem » veut dire « Allons-y » en wolof. Trouvez votre trajet en bus, en taxi ou à pied — et les mots pour vous faire comprendre partout au Sénégal.</p>
+    </div>
+    <div class="hero-meta">
+      <div>Langues locales : <b>Wolof · Sérère · Pulaar</b></div>
+      <div>Modes : <b>Pied · Car · Taxi · BRT · TER · Bus urbain</b></div>
+      <button id="install-btn" class="install-btn">📲 Installer l'application</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="foreword" id="apropos">
+    <div class="foreword-badge">Avant-propos</div>
+    <p><b>Ñu Déem</b> est une application conçue et développée par <b>Mamadou Diouf</b>, étudiant apprenti géomaticien et environnementaliste.</p>
+    <p id="foreword-editable">Son objectif est de faciliter les déplacements au Sénégal en réunissant, dans un même outil, la cartographie du territoire (régions, départements et communes), l'ensemble des moyens de transport disponibles — du BRT et du TER dans l'agglomération dakaroise aux cars et sept-places dans les autres régions — ainsi qu'un accès simple aux langues nationales (wolof, sérère, pulaar) pour mieux communiquer sur la route. Elle s'inscrit aussi dans une démarche géomatique et environnementale : mieux connaître le territoire et encourager le recours aux transports collectifs plutôt qu'individuels.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="search-card" id="itineraire">
+    <div class="search-grid">
+      <div class="field autocomplete-field">
+        <label for="depart-input">Départ</label>
+        <div class="ac-input-row">
+          <input type="text" id="depart-input" placeholder="Adresse, ville, lieu — partout dans le monde" autocomplete="off">
+          <button type="button" class="mini-locate" id="depart-locate" title="Utiliser ma position actuelle">📍</button>
+        </div>
+        <div class="suggestions" id="depart-suggestions"></div>
+      </div>
+      <div class="field autocomplete-field">
+        <label for="arrivee-input">Arrivée</label>
+        <div class="ac-input-row">
+          <input type="text" id="arrivee-input" placeholder="Adresse, ville, lieu — partout dans le monde" autocomplete="off">
+        </div>
+        <div class="suggestions" id="arrivee-suggestions"></div>
+      </div>
+      <button class="go-btn" id="go-btn">Chercher l'itinéraire →</button>
+    </div>
+
+    <div class="quick-senegal">
+      <span class="quick-label">Accès rapide Sénégal :</span>
+      <select id="quick-depart"><option value="">— choisir un départ —</option></select>
+      <select id="quick-arrivee"><option value="">— choisir une arrivée —</option></select>
+    </div>
+
+    <div class="mode-row" id="mode-row">
+      <button class="mode-btn active" data-mode="pied"><span class="ic">🚶</span> À pied</button>
+      <button class="mode-btn" data-mode="velo"><span class="ic">🚲</span> Vélo</button>
+      <button class="mode-btn" data-mode="voiture"><span class="ic">🚗</span> Voiture</button>
+      <button class="mode-btn sn-only" data-mode="car"><span class="ic">🚌</span> Car / sept-place</button>
+      <button class="mode-btn sn-only" data-mode="taxi"><span class="ic">🚕</span> Taxi (Sénégal)</button>
+      <button class="mode-btn sn-only" data-mode="brt"><span class="ic">🚏</span> BRT</button>
+      <button class="mode-btn sn-only" data-mode="ter"><span class="ic">🚆</span> TER</button>
+      <button class="mode-btn sn-only" data-mode="urbain"><span class="ic">🚐</span> Bus urbain (DDD/Tata)</button>
+    </div>
+    <p class="swap-note" id="route-status">À pied, à vélo et en voiture, le trajet suit les vraies rues et chemins (données OpenStreetMap), partout dans le monde. Les modes spécifiques au Sénégal (car, taxi, BRT, TER, bus urbain) apparaissent automatiquement quand départ et arrivée sont au Sénégal.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="main-grid" id="carte">
+    <div class="panel">
+      <h2>Carte du Sénégal</h2>
+      <p class="sub">Fond OpenStreetMap · 46 départements, chefs-lieux cliquables — cliquez un point pour voir communes, lieux connus et transport.</p>
+      <div id="map"></div>
+      <div class="rotate-box">
+        <span class="rotate-label">🧭 Rotation de la carte</span>
+        <input type="range" id="rotate-slider" min="0" max="359" value="0" step="1">
+        <span id="rotate-value">0°N</span>
+        <button class="rotate-reset" id="rotate-reset" title="Réinitialiser au Nord">⟲ Nord</button>
+      </div>
+      <div class="guide-box" id="guide-box">
+        <div class="guide-row">
+          <button class="guide-btn" id="locate-btn">📍 Me localiser</button>
+          <button class="guide-btn" id="track-btn" disabled>🧭 Suivre mon trajet en direct</button>
+        </div>
+        <div id="guide-status" class="guide-status">Calculez un itinéraire, puis activez le suivi pour un guidage en direct pendant le trajet.</div>
+        <label class="voice-toggle"><input type="checkbox" id="voice-guide-toggle"> 🔊 Annoncer les directions à voix haute pendant le suivi</label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Votre itinéraire</h2>
+      <p class="sub">Sélectionnez un départ, une arrivée et un mode, puis lancez la recherche.</p>
+      <div id="results">
+        <div class="result-empty">Aucun trajet calculé pour l'instant.<br>Choisissez deux villes ci-dessus 👆</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="transit-section" id="transports">
+    <div class="transit-head">
+      <h2>Transports urbains de Dakar</h2>
+      <p>BRT, TER, Dakar Dem Dikk et bus Tata (AFTU) : quatre réseaux complémentaires pour se déplacer dans l'agglomération.</p>
+    </div>
+    <div class="transit-grid">
+      <div class="transit-card" style="--transit-color:#3c6e49;">
+        <div class="t-head"><div class="t-ic">🚏</div><div><h3>SunuBRT</h3><p class="t-sub">Bus à haut niveau de service</p></div></div>
+        <p style="font-size:13px;color:#5a4f38;margin:0;">Site propre entre Petersen (centre-ville) et Guédiawaye, 23 stations sur 2 lignes (B1, B2), électrique.</p>
+        <ul>
+          <li>Ligne B1 : Papa Gueye Fall → Grand Dakar → Liberté 5/6 → Golf Sud → Préfecture de Guédiawaye</li>
+          <li>Trajet Guédiawaye ↔ Petersen : environ 45 min</li>
+        </ul>
+        <div class="t-facts">
+          <span class="t-fact">🕕 6h–21h, 7j/7</span>
+          <span class="t-fact">⏱️ toutes les 6 min</span>
+          <span class="t-fact">💰 400–500 FCFA</span>
+        </div>
+      </div>
+
+      <div class="transit-card" style="--transit-color:#2a3660;">
+        <div class="t-head"><div class="t-ic">🚆</div><div><h3>TER</h3><p class="t-sub">Train Express Régional</p></div></div>
+        <p style="font-size:13px;color:#5a4f38;margin:0;">Ligne ferroviaire Dakar ↔ Diamniadio (extension vers l'AIBD en cours), la plus rapide pour éviter les embouteillages.</p>
+        <ul>
+          <li>Gares : Dakar, Colobane, Hann, Dalifort, Pikine, Thiaroye, Yeumbeul, Keur Massar, PNR, Rufisque, Bargny, Diamniadio</li>
+          <li>Vers l'AIBD : correspondance en navette depuis Diamniadio</li>
+        </ul>
+        <div class="t-facts">
+          <span class="t-fact">🕕 5h30–22h</span>
+          <span class="t-fact">⏱️ 10 à 20 min</span>
+          <span class="t-fact">💰 1 500 / 2 500 FCFA</span>
+        </div>
+      </div>
+
+      <div class="transit-card" style="--transit-color:#e8a233;">
+        <div class="t-head"><div class="t-ic">🚌</div><div><h3>Dakar Dem Dikk</h3><p class="t-sub">Bus jaunes, réseau public (DDD)</p></div></div>
+        <p style="font-size:13px;color:#5a4f38;margin:0;">Une vingtaine de lignes urbaines à Dakar, plus un réseau interurbain vers une vingtaine de villes du pays.</p>
+        <ul>
+          <li>Lignes urbaines identifiées par numéro, destination affichée à l'avant du bus</li>
+          <li>Lignes interurbaines : un à deux départs par jour vers les grandes villes</li>
+        </ul>
+        <div class="t-facts">
+          <span class="t-fact">🕕 tôt le matin – soirée</span>
+          <span class="t-fact">💰 150–300 FCFA (urbain)</span>
+        </div>
+      </div>
+
+      <div class="transit-card" style="--transit-color:#c0512e;">
+        <div class="t-head"><div class="t-ic">🚐</div><div><h3>Tata (AFTU)</h3><p class="t-sub">Minibus privés, réseau le plus dense</p></div></div>
+        <p style="font-size:13px;color:#5a4f38;margin:0;">Exploités par des coopératives regroupées dans l'AFTU. Desservent Dakar, la banlieue et plusieurs régions (Thiès, Louga...).</p>
+        <ul>
+          <li>Itinéraire souvent affiché sur le pare-brise</li>
+          <li>Complétés par les cars rapides et Ndiaga Ndiaye historiques (progressivement remplacés)</li>
+        </ul>
+        <div class="t-facts">
+          <span class="t-fact">🕕 tôt le matin – 21h</span>
+          <span class="t-fact">💰 100–500 FCFA</span>
+        </div>
+      </div>
+    </div>
+    <p class="transit-note">Horaires et tarifs 2026 arrondis à titre indicatif (source : opérateurs SunuBRT, TER Sénégal, Dakar Dem Dikk, AFTU) — vérifiez les affichages en station, sujets à ajustement.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="transit-section" id="transports-regions">
+    <div class="transit-head">
+      <h2>Transport dans les autres régions</h2>
+      <p>Hors agglomération dakaroise, le transport public repose surtout sur les gares routières : cars Dakar Dem Dikk interurbains, bus Tata régionaux, "sept-places" et cars rapides qui partent en général dès qu'ils sont pleins plutôt qu'à heure fixe.</p>
+    </div>
+    <div class="region-table-wrap">
+      <table class="region-table">
+        <thead>
+          <tr><th>Région</th><th>Distance / Dakar</th><th>Durée route est.</th><th>Coût bus/car est.</th><th>Opérateurs courants</th></tr>
+        </thead>
+        <tbody id="region-table-body"></tbody>
+      </table>
+    </div>
+    <p class="transit-note">Distances et durées calculées depuis le chef-lieu de région jusqu'à Dakar ; le coût suit le référentiel Dakar–Mbour (25 FCFA/km). La plupart des gares routières régionales n'ont pas d'horaires fixes affichés : mieux vaut arriver le matin pour un premier départ. Les communes et lieux affichés sur la carte sont une sélection représentative — le Sénégal compte environ 550 communes au total, trop nombreuses pour être toutes cartographiées individuellement dans ce prototype.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="lex-section" id="lexique">
+    <div class="lex-head">
+      <h2>Lexique de route</h2>
+      <p>Quelques mots pour saluer, demander son chemin et négocier un tarif, dans les trois langues nationales les plus utiles en déplacement. Appuyez sur 🔊 pour une écoute.</p>
+    </div>
+
+    <div class="lang-tabs">
+      <button class="lang-tab active" data-lang="wolof">Wolof</button>
+      <button class="lang-tab" data-lang="serere">Sérère</button>
+      <button class="lang-tab" data-lang="pulaar">Pulaar</button>
+    </div>
+    <p class="voice-note">🔊 Chaque mot est accompagné d'une transcription phonétique (entre barres obliques) pour bien le prononcer. Aucun navigateur ne propose de synthèse vocale native en wolof, sérère ou pulaar : le bouton lit cette transcription avec une voix française ralentie, plus proche du rythme réel que l'orthographe d'origine.</p>
+
+    <div class="lex-grid" id="lex-grid"></div>
+    <p class="lex-note">Ces langues comptent de nombreuses variantes régionales : l'orthographe et la prononciation peuvent légèrement changer d'une zone à l'autre. Un sourire et une tentative de prononciation sont toujours bien accueillis.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="privacy-section" id="confidentialite">
+    <h2>Politique de confidentialité</h2>
+    <div class="privacy-card">
+      <h3>Ce que Ñu Déem fait sur votre appareil</h3>
+      <p>Ñu Déem est une application qui fonctionne entièrement dans votre navigateur. Elle n'a pas de serveur ni de base de données propres : aucune information vous concernant n'est envoyée à Mamadou Diouf ni stockée sur un serveur de l'application.</p>
+
+      <h3>Géolocalisation</h3>
+      <p>Quand vous utilisez « 📍 Me localiser », « 🧭 Suivre mon trajet en direct » ou le bouton 📍 du champ Départ, votre position est demandée directement par votre navigateur, avec votre autorisation explicite à chaque fois. Cette position sert uniquement à afficher un point sur la carte et à calculer une distance/direction : elle n'est ni enregistrée, ni transmise à Ñu Déem, ni partagée avec un tiers par l'application.</p>
+
+      <h3>Services externes utilisés</h3>
+      <ul>
+        <li><b>OpenStreetMap</b> (fond de carte) et <b>Esri World Imagery</b> (fond satellite) : votre navigateur leur demande directement les images de carte visibles à l'écran.</li>
+        <li><b>Nominatim</b> (OpenStreetMap) : le texte que vous tapez dans les champs Départ/Arrivée, ainsi que votre position lors d'une localisation, sont envoyés à ce service pour trouver le lieu correspondant.</li>
+        <li><b>OSRM / routing.openstreetmap.de (FOSSGIS)</b> : les coordonnées de départ et d'arrivée sont envoyées à ce service pour calculer un itinéraire réel (à pied, à vélo, en voiture).</li>
+      </ul>
+      <p>Ces services sont opérés par des organisations tierces (le projet OpenStreetMap, Esri, FOSSGIS), indépendantes de Ñu Déem. Chacun applique sa propre politique de confidentialité sur les requêtes qu'il reçoit ; Ñu Déem ne contrôle pas ce que ces services font de ces requêtes.</p>
+
+      <h3>Synthèse vocale</h3>
+      <p>La lecture à voix haute (prononciation du lexique, instructions de trajet) utilise la fonction de synthèse vocale intégrée à votre navigateur : le texte n'est envoyé à aucun serveur pour cette fonctionnalité.</p>
+
+      <h3>Cookies et suivi</h3>
+      <p>Ñu Déem ne dépose pas de cookie, ne fait pas de suivi publicitaire et n'utilise aucun outil d'analyse d'audience.</p>
+
+      <h3>Contact</h3>
+      <p>Pour toute question sur cette application, vous pouvez contacter son créateur, Mamadou Diouf.</p>
+    </div>
+    <p class="privacy-updated">Dernière mise à jour : juillet 2026.</p>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="discussion-section" id="discussion">
+    <div class="transit-head">
+      <h2>Discussion</h2>
+      <p>Échangez avec les autres utilisateurs de Ñu Déem : questions, retours d'expérience sur un trajet, suggestions d'amélioration.</p>
+    </div>
+    <div class="discussion-card" id="discussion-card">
+      <p class="discussion-note">💬 Cet espace utilise <b>Giscus</b>, un module de discussion gratuit basé sur GitHub Discussions. Il doit être activé une fois par le créateur de l'application (dépôt GitHub public + Discussions activées) — tant que ce n'est pas fait, la discussion n'apparaît pas encore ci-dessous.</p>
+      <div id="giscus-container"></div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <section class="settings-section" id="parametres">
+    <div class="transit-head">
+      <h2>Paramètres</h2>
+      <p>Ajustez ici certains textes et tarifs de l'application. <b>Important :</b> ces réglages sont enregistrés uniquement sur cet appareil/navigateur (aucun serveur) — ils ne changent pas ce que voient les autres visiteurs du site. Pour une mise à jour visible par tout le monde, il faut republier le fichier.</p>
+    </div>
+    <div class="settings-card">
+      <label class="settings-label">Texte de l'avant-propos
+        <textarea id="set-foreword" rows="4"></textarea>
+      </label>
+      <label class="settings-label">Référence tarifaire Dakar → Mbour (FCFA, ≈60 km, sert de base au calcul du prix des cars)
+        <input type="number" id="set-refprice" min="0" step="50">
+      </label>
+      <label class="settings-label">Prix de base du taxi (FCFA, avant le tarif au km)
+        <input type="number" id="set-taxibase" min="0" step="50">
+      </label>
+      <div class="settings-actions">
+        <button class="go-btn" id="settings-save">Enregistrer sur cet appareil</button>
+        <button class="mode-btn" id="settings-reset" type="button">Réinitialiser</button>
+      </div>
+      <p class="settings-status" id="settings-status"></p>
+    </div>
+  </section>
+</div>
+
+<nav class="app-nav" id="app-nav">
+  <a href="#apropos" data-target="apropos"><span class="nav-ic">ℹ️</span>Infos</a>
+  <a href="#itineraire" data-target="itineraire"><span class="nav-ic">🔎</span>Trajet</a>
+  <a href="#carte" data-target="carte"><span class="nav-ic">🗺️</span>Carte</a>
+  <a href="#transports" data-target="transports"><span class="nav-ic">🚌</span>Bus</a>
+  <a href="#lexique" data-target="lexique"><span class="nav-ic">🗣️</span>Langues</a>
+  <a href="#discussion" data-target="discussion"><span class="nav-ic">💬</span>Chat</a>
+  <a href="#parametres" data-target="parametres"><span class="nav-ic">⚙️</span>Réglages</a>
+</nav>
+
+<footer>
+  <div class="wrap">ÑU DÉEM — prototype de démonstration · Sénégal, <b>14 régions · 46 départements</b> · données de trajet indicatives · <a href="#confidentialite" style="color:#e8a233;">Politique de confidentialité</a></div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.js"></script>
+<script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
+<script>
+/* ---------------- DONNÉES : LES 46 DÉPARTEMENTS ---------------- */
+const CITIES = [
+  // Région de Dakar
+  {id:"dakar", name:"Dakar", region:"Dakar", lat:14.6928, lon:-17.4467,
+    communes:["Plateau", "Médina", "Gorée", "Fann-Point E-Amitié", "Grand Dakar", "Hann Bel-Air", "HLM", "Sicap-Liberté", "Grand Yoff", "Parcelles Assainies", "Patte d'Oie", "Ouakam", "Ngor", "Yoff", "Mermoz-Sacré-Cœur", "Cambérène", "Biscuiterie", "Gueule Tapée-Fass-Colobane", "Dieuppeul-Derklé"],
+    lieux:["Île de Gorée (UNESCO)", "Monument de la Renaissance africaine", "Place de l'Indépendance", "Marché Sandaga"]},
+  {id:"pikine", name:"Pikine", region:"Dakar", lat:14.7548, lon:-17.3969,
+    communes:["Pikine Nord", "Pikine Est", "Pikine Ouest", "Dagoudane", "Guinaw Rail Nord", "Guinaw Rail Sud", "Thiaroye Gare", "Diacksao", "Mbao", "Yeumbeul Nord", "Yeumbeul Sud"],
+    lieux:["Grand marché de Pikine", "Plage de Thiaroye"]},
+  {id:"guediawaye", name:"Guédiawaye", region:"Dakar", lat:14.7692, lon:-17.4041,
+    communes:["Golf Sud", "Sam Notaire", "Ndiarème Limamoulaye", "Wakhinane Nimzatt", "Médina Gounass"],
+    lieux:["Stade Amadou Barry"]},
+  {id:"rufisque", name:"Rufisque", region:"Dakar", lat:14.7167, lon:-17.2667,
+    communes:["Rufisque Nord", "Rufisque Est", "Rufisque Ouest", "Bargny", "Sébikotane", "Diamniadio", "Sangalkam"],
+    lieux:["Vieille ville coloniale de Rufisque", "Gare TER de Diamniadio", "Cathédrale de Rufisque"]},
+  {id:"keurmassar", name:"Keur Massar", region:"Dakar", lat:14.7833, lon:-17.3167,
+    communes:["Keur Massar Nord", "Keur Massar Sud", "Jaxaay-Parcelles-Niakoul Rap"],
+    lieux:[]},
+
+  // Région de Thiès
+  {id:"thies", name:"Thiès", region:"Thiès", lat:14.791, lon:-16.9359,
+    communes:["Thiès", "Fandène", "Keur Moussa", "Pout", "Notto Diobass"],
+    lieux:["Cathédrale de Thiès", "Manufacture sénégalaise des arts décoratifs (tapisseries)", "Monastère de Keur Moussa"]},
+  {id:"mbour", name:"Mbour", region:"Thiès", lat:14.4198, lon:-16.9646,
+    communes:["Mbour", "Saly Portudal", "Nianing", "Joal-Fadiouth", "Ngaparou", "Somone"],
+    lieux:["Plages de Saly", "Île de Fadiouth (village aux coquillages)", "Lagune de la Somone", "Réserve de Bandia (à proximité)"]},
+  {id:"tivaouane", name:"Tivaouane", region:"Thiès", lat:14.95, lon:-16.8167,
+    communes:["Tivaouane", "Mékhé", "Pambal", "Mérina Dakhar"],
+    lieux:["Grande mosquée de Tivaouane (foyer tidiane)"]},
+
+  // Région de Diourbel
+  {id:"diourbel", name:"Diourbel", region:"Diourbel", lat:14.6479, lon:-16.2333,
+    communes:["Diourbel", "Ndoulo", "Touré Mbonde"],
+    lieux:["Ancienne résidence de Cheikh Ahmadou Bamba"]},
+  {id:"bambey", name:"Bambey", region:"Diourbel", lat:14.6975, lon:-16.4472,
+    communes:["Bambey", "Lambaye", "Baba Garage"],
+    lieux:["Centre de recherche agricole ISRA/CNRA"]},
+  {id:"mbacke", name:"Mbacké", region:"Diourbel", lat:14.7936, lon:-15.9083,
+    communes:["Mbacké", "Touba", "Dianké Souf"],
+    lieux:["Grande Mosquée de Touba (haut lieu du mouridisme, Magal annuel)"]},
+
+  // Région de Fatick
+  {id:"fatick", name:"Fatick", region:"Fatick", lat:14.339, lon:-16.411,
+    communes:["Fatick", "Diakhao", "Fimela"],
+    lieux:["Diakhao, ancienne capitale du royaume du Sine"]},
+  {id:"foundiougne", name:"Foundiougne", region:"Fatick", lat:14.1333, lon:-16.4667,
+    communes:["Foundiougne", "Sokone", "Passy", "Toubacouta"],
+    lieux:["Delta du Saloum (UNESCO)", "Réserve de Fathala (à proximité)"]},
+  {id:"gossas", name:"Gossas", region:"Fatick", lat:14.4936, lon:-16.0658,
+    communes:["Gossas", "Ouadiour", "Colobane"],
+    lieux:[]},
+
+  // Région de Kaolack
+  {id:"kaolack", name:"Kaolack", region:"Kaolack", lat:14.1652, lon:-16.0726,
+    communes:["Kaolack", "Ndiaffate", "Kahone"],
+    lieux:["Marché central de Kaolack", "Kahone, ancienne capitale du royaume du Saloum"]},
+  {id:"nioro", name:"Nioro du Rip", region:"Kaolack", lat:13.75, lon:-15.8,
+    communes:["Nioro du Rip", "Wack Ngouna", "Paoskoto"],
+    lieux:[]},
+  {id:"guinguineo", name:"Guinguinéo", region:"Kaolack", lat:14.2667, lon:-15.95,
+    communes:["Guinguinéo", "Mbadakhoune"],
+    lieux:[]},
+
+  // Région de Kaffrine
+  {id:"kaffrine", name:"Kaffrine", region:"Kaffrine", lat:14.1059, lon:-15.5504,
+    communes:["Kaffrine", "Nganda", "Mabo"],
+    lieux:[]},
+  {id:"birkelane", name:"Birkelane", region:"Kaffrine", lat:14.2333, lon:-15.7333,
+    communes:["Birkelane", "Mbeuleup"],
+    lieux:[]},
+  {id:"koungheul", name:"Koungheul", region:"Kaffrine", lat:13.9833, lon:-14.8,
+    communes:["Koungheul", "Ida Mouride"],
+    lieux:[]},
+  {id:"malemhodar", name:"Malem Hodar", region:"Kaffrine", lat:14.1667, lon:-15.35,
+    communes:["Malem Hodar", "Sagna"],
+    lieux:[]},
+
+  // Région de Louga
+  {id:"louga", name:"Louga", region:"Louga", lat:15.6173, lon:-16.224,
+    communes:["Louga", "Coki", "Sakal"],
+    lieux:["Artisanat de Louga", "Proximité du lac de Guiers"]},
+  {id:"kebemer", name:"Kébémer", region:"Louga", lat:15.3833, lon:-16.4333,
+    communes:["Kébémer", "Darou Mousty", "Sagatta"],
+    lieux:[]},
+  {id:"linguere", name:"Linguère", region:"Louga", lat:15.4, lon:-15.1167,
+    communes:["Linguère", "Dahra", "Barkédji"],
+    lieux:["Réserve de faune du Ferlo"]},
+
+  // Région de Saint-Louis
+  {id:"stlouis", name:"Saint-Louis", region:"Saint-Louis", lat:16.0179, lon:-16.4896,
+    communes:["Saint-Louis", "Gandiol", "Mpal"],
+    lieux:["Île de Saint-Louis (UNESCO)", "Parc national de la Langue de Barbarie", "Pont Faidherbe"]},
+  {id:"dagana", name:"Dagana", region:"Saint-Louis", lat:16.5167, lon:-15.5,
+    communes:["Dagana", "Richard-Toll", "Rosso-Sénégal"],
+    lieux:["Richard-Toll et ses sucreries (CSS)", "Château du baron Roger"]},
+  {id:"podor", name:"Podor", region:"Saint-Louis", lat:16.65, lon:-14.9667,
+    communes:["Podor", "Ndioum", "Golléré"],
+    lieux:["Fort colonial de Podor"]},
+
+  // Région de Matam
+  {id:"matam", name:"Matam", region:"Matam", lat:15.6559, lon:-13.2554,
+    communes:["Matam", "Ourossogui", "Thilogne"],
+    lieux:[]},
+  {id:"kanel", name:"Kanel", region:"Matam", lat:15.4833, lon:-13.1833,
+    communes:["Kanel", "Sémé", "Ndendory"],
+    lieux:[]},
+  {id:"ranerou", name:"Ranérou Ferlo", region:"Matam", lat:15.3, lon:-13.9667,
+    communes:["Ranérou", "Vélingara Ferlo"],
+    lieux:[]},
+
+  // Région de Tambacounda
+  {id:"tamba", name:"Tambacounda", region:"Tambacounda", lat:13.7671, lon:-13.6673,
+    communes:["Tambacounda", "Missirah", "Koussanar"],
+    lieux:["Proximité du Parc national du Niokolo-Koba (UNESCO)"]},
+  {id:"bakel", name:"Bakel", region:"Tambacounda", lat:14.9, lon:-12.4667,
+    communes:["Bakel", "Kidira", "Moudéry"],
+    lieux:["Fort colonial de Bakel", "Frontière avec le Mali"]},
+  {id:"goudiry", name:"Goudiry", region:"Tambacounda", lat:14.1833, lon:-12.7167,
+    communes:["Goudiry", "Bala", "Koulor"],
+    lieux:[]},
+  {id:"koumpentoum", name:"Koumpentoum", region:"Tambacounda", lat:13.9833, lon:-14.5667,
+    communes:["Koumpentoum", "Kouthiaba Wolof"],
+    lieux:[]},
+
+  // Région de Kédougou
+  {id:"kedougou", name:"Kédougou", region:"Kédougou", lat:12.5556, lon:-12.1747,
+    communes:["Kédougou", "Bandafassi", "Fongolimbi"],
+    lieux:["Cascades de Dindéfelo", "Pays bassari (UNESCO)", "Villages bédik"]},
+  {id:"salemata", name:"Salemata", region:"Kédougou", lat:12.8167, lon:-12.7833,
+    communes:["Salemata", "Éthiolo"],
+    lieux:["Villages bassari"]},
+  {id:"saraya", name:"Saraya", region:"Kédougou", lat:12.85, lon:-11.75,
+    communes:["Saraya", "Khossanto"],
+    lieux:["Zone aurifère traditionnelle"]},
+
+  // Région de Kolda
+  {id:"kolda", name:"Kolda", region:"Kolda", lat:12.8939, lon:-14.9412,
+    communes:["Kolda", "Médina Chérif", "Dabo"],
+    lieux:[]},
+  {id:"velingara", name:"Vélingara", region:"Kolda", lat:12.15, lon:-14.1167,
+    communes:["Vélingara", "Bonconto", "Kounkané"],
+    lieux:[]},
+  {id:"medinayoro", name:"Médina Yoro Foulah", region:"Kolda", lat:13.05, lon:-14.55,
+    communes:["Médina Yoro Foulah", "Dabo"],
+    lieux:[]},
+
+  // Région de Sédhiou
+  {id:"sedhiou", name:"Sédhiou", region:"Sédhiou", lat:12.7044, lon:-15.5569,
+    communes:["Sédhiou", "Diannah Malary"],
+    lieux:["Bords du fleuve Casamance"]},
+  {id:"bounkiling", name:"Bounkiling", region:"Sédhiou", lat:13.0167, lon:-15.7,
+    communes:["Bounkiling", "Diaroumé"],
+    lieux:[]},
+  {id:"goudomp", name:"Goudomp", region:"Sédhiou", lat:12.5167, lon:-15.5333,
+    communes:["Goudomp", "Samine", "Simbandi Balante"],
+    lieux:[]},
+
+  // Région de Ziguinchor
+  {id:"ziguinchor", name:"Ziguinchor", region:"Ziguinchor", lat:12.5833, lon:-16.2719,
+    communes:["Ziguinchor", "Niaguis", "Nyassia"],
+    lieux:["Marché Saint-Maur", "Bords de la Casamance"]},
+  {id:"bignona", name:"Bignona", region:"Ziguinchor", lat:12.8167, lon:-16.2333,
+    communes:["Bignona", "Diouloulou", "Thionck Essyl"],
+    lieux:["Forêts classées de Basse-Casamance"]},
+  {id:"oussouye", name:"Oussouye", region:"Ziguinchor", lat:12.485, lon:-16.5464,
+    communes:["Oussouye", "Mlomp", "Elinkine", "Île de Karabane"],
+    lieux:["Îles Karabane", "Royaume diola d'Oussouye", "Cap Skirring (plages)"]},
+];
+
+/* ---------------- TRANSPORTS TYPIQUES PAR RÉGION ---------------- */
+const OPERATORS_BY_REGION = {
+  "Dakar": "BRT, TER, Dakar Dem Dikk, bus Tata (AFTU)",
+  "Thiès": "Tata régional (AFTU), DDD interurbain, sept-places",
+  "Louga": "Tata régional (AFTU), sept-places, cars rapides",
+  "Diourbel": "DDD interurbain, sept-places (pôle Touba/Mbacké)",
+  "Saint-Louis": "DDD interurbain, sept-places",
+  "Kaolack": "DDD interurbain, sept-places (carrefour routier)",
+  "Fatick": "Sept-places, cars rapides",
+  "Kaffrine": "Sept-places, cars rapides",
+  "Matam": "DDD interurbain, sept-places longue distance",
+  "Tambacounda": "DDD interurbain, sept-places longue distance",
+  "Kédougou": "Sept-places longue distance (route la plus longue)",
+  "Kolda": "DDD interurbain, sept-places",
+  "Sédhiou": "Sept-places, liaison via la Gambie ou le Sud",
+  "Ziguinchor": "DDD interurbain, sept-places, liaison maritime (bateau Aline Sitoé Diatta)",
+};
+
+/* ---------------- LEXIQUE (mot local + prononciation approximative) ---------------- */
+const LEXIQUE = {
+  wolof: [
+    {cat:"Salutations", rows:[
+      ["Bonjour / Bonsoir","Salaam aleekum","sa-lam a-lé-koum"],
+      ["(réponse)","Maalekum salaam","ma-lé-koum sa-lam"],
+      ["Comment allez-vous ?","Naka nga def ?","na-ka nga def"],
+      ["Je vais bien","Maa ngi fi rekk","ma ngui fi rèk"],
+      ["Au revoir","Ba beneen yoon","ba bé-néén yonn"],
+    ]},
+    {cat:"Transport & argent", rows:[
+      ["Taxi","Taksi","tak-si"],
+      ["Combien ça coûte ?","Ñaata la ?","nya-ta la"],
+      ["C'est trop cher","Da fa seer torop","da fa séér to-rop"],
+      ["Un peu / beaucoup","Touti / Torop","tou-ti / to-rop"],
+    ]},
+    {cat:"Se repérer", rows:[
+      ["Où est... ?","Ana... ?","a-na"],
+      ["Excusez-moi / pardon","Baal ma","bal ma"],
+      ["Oui / Non","Waaw / Déedéet","waw / dé-é-dét"],
+    ]},
+    {cat:"Politesse", rows:[
+      ["Merci","Jërëjëf","jeu-reu-jeuf"],
+      ["De rien","Amul solo","a-moul so-lo"],
+      ["S'il vous plaît","Bu la neexee","bou la né-è-khé"],
+    ]},
+  ],
+  serere: [
+    {cat:"Salutations", rows:[
+      ["Bonjour (matin)","Mbaldo","mbal-do"],
+      ["Bonjour (après-midi)","Ndioko","ndio-ko"],
+      ["Bonsoir","Ngiropo","ngui-ro-po"],
+      ["Comment ça va ?","Nafio","na-fio"],
+      ["Je vais bien","Mékhémène","mé-khé-mè-ne"],
+    ]},
+    {cat:"Se repérer", rows:[
+      ["Où vas-tu ?","Tamo réta","ta-mo ré-ta"],
+      ["Paix","Djam","djam"],
+    ]},
+    {cat:"Vie quotidienne", rows:[
+      ["Manger","Niam","niam"],
+      ["Boire","Yère","yè-re"],
+      ["Comment t'appelles-tu ?","Na néwé","na né-wé"],
+    ]},
+    {cat:"Politesse", rows:[
+      ["Merci","Ndiokodjal","ndio-ko-djal"],
+    ]},
+  ],
+  pulaar: [
+    {cat:"Salutations", rows:[
+      ["Bonsoir","One keeri diam","o-né ké-ri diam"],
+      ["Comment vas-tu ?","Ada selli ?","a-da sél-li"],
+      ["(réponse : ça va bien)","Modum","mo-doum"],
+    ]},
+    {cat:"Se repérer", rows:[
+      ["Où vas-tu ?","To paaDaa ?","to pa-da"],
+      ["Y a-t-il quelqu'un ?","One gonedoodo ?","o-né go-né-do-do"],
+      ["Parlez-vous français ?","A n'da hala français ?","an-da ha-la fran-sé"],
+    ]},
+    {cat:"Utile", rows:[
+      ["Pas de problème","Ala bassi","a-la ba-si"],
+      ["Dépêche-toi","Heno !","hé-no"],
+    ]},
+    {cat:"Politesse", rows:[
+      ["Merci","Adjarama","a-dja-ra-ma"],
+    ]},
+  ],
+};
+
+/* ---------------- PHRASES PAR MODE (pour les résultats) ---------------- */
+const MODE_PHRASE = {
+  car: {wolof:"Ñaata la ? (Combien ça coûte ?)", label:"Négocier / confirmer le prix"},
+  taxi: {wolof:"Da fa seer torop (C'est trop cher)", label:"Négocier le tarif avant de monter"},
+  pied: {wolof:"Ana... ? (Où est... ?)", label:"Demander son chemin à un passant"},
+  brt: {wolof:"Ñaata la ? (Combien ça coûte ?)", label:"Valider son titre à l'entrée de la station"},
+  ter: {wolof:"Ñaata la ? (Combien ça coûte ?)", label:"Acheter son billet au guichet ou en agence"},
+  urbain: {wolof:"Ana... ? (Où est... ?)", label:"Demander l'arrêt au receveur"},
+};
+
+/* ---------------- ÉTAT ---------------- */
+let currentMode = "pied";
+let currentLang = "wolof";
+let currentDestination = null;
+let departPoint = null;   // {label, lat, lon, fullLabel?, deptId?, deptName?, region?}
+let arrivePoint = null;
+
+/* ---------------- POINTS SÉNÉGAL (chefs-lieux + communes, accès rapide) ---------------- */
+// Nous n'avons pas de GPS précis officiel par commune (environ 550 au Sénégal).
+// Chaque commune reçoit donc une position estimée, calculée de façon déterministe
+// autour du chef-lieu de son département, afin de permettre des trajets réalistes
+// À L'INTÉRIEUR d'un même département (village à village, quartier à quartier).
+// Ce sont des distances indicatives, pas des coordonnées GPS officielles.
+function communeOffset(name, baseLat){
+  let hash = 0;
+  for(let i=0;i<name.length;i++){ hash = (hash*31 + name.charCodeAt(i)) >>> 0; }
+  const angle = (hash % 360) * Math.PI/180;
+  const radiusKm = 2 + (hash % 900)/100; // entre 2 et 11 km du chef-lieu, environ
+  const dLat = (radiusKm/111) * Math.cos(angle);
+  const dLon = (radiusKm/(111*Math.cos(baseLat*Math.PI/180))) * Math.sin(angle);
+  return {dLat, dLon};
+}
+
+const SEARCH_POINTS = [];
+CITIES.forEach(c=>{
+  SEARCH_POINTS.push({id:c.id, label:`${c.name} (chef-lieu)`, lat:c.lat, lon:c.lon, region:c.region, deptId:c.id, deptName:c.name});
+  (c.communes||[]).forEach((commune,i)=>{
+    const off = communeOffset(commune, c.lat);
+    SEARCH_POINTS.push({id:`${c.id}__c${i}`, label:commune, lat:c.lat+off.dLat, lon:c.lon+off.dLon, region:c.region, deptId:c.id, deptName:c.name});
+  });
+});
+
+function pointFromSearchId(id){
+  const p = SEARCH_POINTS.find(x=>x.id===id);
+  if(!p) return null;
+  return {label:p.label, lat:p.lat, lon:p.lon, deptId:p.deptId, deptName:p.deptName, region:p.region};
+}
+
+const departInput = document.getElementById("depart-input");
+const arriveeInput = document.getElementById("arrivee-input");
+const departSuggestions = document.getElementById("depart-suggestions");
+const arriveeSuggestions = document.getElementById("arrivee-suggestions");
+const departLocateBtn = document.getElementById("depart-locate");
+const quickDepart = document.getElementById("quick-depart");
+const quickArrivee = document.getElementById("quick-arrivee");
+
+function buildQuickSelect(sel){
+  CITIES.forEach(c=>{
+    const og = document.createElement("optgroup");
+    og.label = `${c.name} — ${c.region}`;
+    SEARCH_POINTS.filter(p=>p.deptId===c.id).forEach(p=>{
+      const o = document.createElement("option");
+      o.value = p.id; o.textContent = p.label;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+}
+buildQuickSelect(quickDepart);
+buildQuickSelect(quickArrivee);
+
+quickDepart.addEventListener("change", ()=>{
+  if(!quickDepart.value) return;
+  departPoint = pointFromSearchId(quickDepart.value);
+  departInput.value = `${departPoint.label} (${departPoint.deptName})`;
+  departSuggestions.classList.remove("show");
+});
+quickArrivee.addEventListener("change", ()=>{
+  if(!quickArrivee.value) return;
+  arrivePoint = pointFromSearchId(quickArrivee.value);
+  arriveeInput.value = `${arrivePoint.label} (${arrivePoint.deptName})`;
+  arriveeSuggestions.classList.remove("show");
+});
+
+/* ---------------- RECHERCHE MONDIALE (Nominatim / OpenStreetMap) ---------------- */
+// Traduit le "type" OSM en mot français reconnaissable (rue, avenue, boulevard, passage...)
+const STREET_TYPE_FR = {
+  residential:"Rue", primary:"Route principale", secondary:"Route", tertiary:"Route",
+  avenue:"Avenue", boulevard:"Boulevard", pedestrian:"Rue piétonne", path:"Chemin",
+  footway:"Passage piéton", track:"Piste", service:"Voie de service", living_street:"Rue résidentielle",
+  unclassified:"Voie", trunk:"Route nationale", motorway:"Autoroute", steps:"Escalier", alley:"Passage",
+};
+function describeAddress(item){
+  const t = STREET_TYPE_FR[item.type];
+  if(item.class==="highway" && t) return `${t} · `;
+  if(item.type==="administrative"||item.class==="boundary") return "📍 Zone administrative · ";
+  if(item.class==="amenity"||item.class==="shop"||item.class==="tourism") return "📌 Lieu · ";
+  return "";
+}
+function debounceSearch(input, suggBox, onPick){
+  let timer = null;
+  input.addEventListener("input", ()=>{
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if(q.length<3){ suggBox.classList.remove("show"); return; }
+    timer = setTimeout(()=>runNominatimSearch(q, suggBox, onPick), 500);
+  });
+}
+async function runNominatimSearch(query, suggBox, onPick){
+  suggBox.innerHTML = `<div class="sug-empty">Recherche…</div>`;
+  suggBox.classList.add("show");
+  try{
+    // addressdetails=1 permet de détecter le type de voie (rue, avenue, boulevard, passage…)
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=8&addressdetails=1&q=${encodeURIComponent(query)}`;
+    const res = await fetch(url, {headers:{"Accept-Language":"fr"}});
+    const data = await res.json();
+    if(!data.length){ suggBox.innerHTML = `<div class="sug-empty">Aucun résultat.</div>`; return; }
+    suggBox.innerHTML = "";
+    data.forEach(item=>{
+      const div = document.createElement("div");
+      div.className = "sug-item";
+      const prefix = describeAddress(item);
+      div.innerHTML = `${prefix ? `<span class="sug-type">${prefix}</span>` : ""}${esc(item.display_name)}`;
+      div.addEventListener("click", ()=>{
+        onPick({label:item.display_name.split(",")[0], lat:parseFloat(item.lat), lon:parseFloat(item.lon), fullLabel:item.display_name});
+        suggBox.classList.remove("show");
+      });
+      suggBox.appendChild(div);
+    });
+  }catch(e){
+    suggBox.innerHTML = `<div class="sug-empty">Recherche indisponible pour le moment.</div>`;
+  }
+}
+debounceSearch(departInput, departSuggestions, pt=>{ departPoint = pt; departInput.value = pt.fullLabel; });
+debounceSearch(arriveeInput, arriveeSuggestions, pt=>{ arrivePoint = pt; arriveeInput.value = pt.fullLabel; });
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".autocomplete-field")){
+    departSuggestions.classList.remove("show");
+    arriveeSuggestions.classList.remove("show");
+  }
+});
+
+// Salutation en wolof à chaque prise en main des champs départ/arrivée : « Salaam aleekum, foo jëm ? »
+// (Bonjour, où est-ce que tu vas ?)
+function greetInWolof(){
+  speak("Salaam aleekum, foo jëm ?");
+}
+departInput.addEventListener("focus", greetInWolof);
+arriveeInput.addEventListener("focus", greetInWolof);
+departInput.addEventListener("touchstart", greetInWolof, {once:false, passive:true});
+arriveeInput.addEventListener("touchstart", greetInWolof, {once:false, passive:true});
+
+departLocateBtn.addEventListener("click", ()=>{
+  if(!("geolocation" in navigator)){ alert("Géolocalisation indisponible sur cet appareil."); return; }
+  departInput.value = "Localisation en cours…";
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude, longitude} = pos.coords;
+    let label = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+    try{
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`, {headers:{"Accept-Language":"fr"}});
+      const data = await res.json();
+      if(data && data.display_name) label = data.display_name;
+    }catch(e){}
+    departPoint = {label:label.split(",")[0], lat:latitude, lon:longitude, fullLabel:label};
+    departInput.value = label;
+  }, err=>{
+    departInput.value = "";
+    alert("Localisation impossible : " + err.message);
+  }, {enableHighAccuracy:true, timeout:10000});
+});
+
+// Départ / arrivée par défaut au chargement : Dakar → Saint-Louis
+departPoint = pointFromSearchId("dakar");
+arrivePoint = pointFromSearchId("stlouis");
+departInput.value = `${departPoint.label} (${departPoint.deptName})`;
+arriveeInput.value = `${arrivePoint.label} (${arrivePoint.deptName})`;
+quickDepart.value = "dakar";
+quickArrivee.value = "stlouis";
+
+function isInSenegal(pt){
+  return pt.lat>=12 && pt.lat<=17 && pt.lon>=-18 && pt.lon<=-11;
+}
+
+/* ---------------- SYNTHÈSE VOCALE (approximation FR) ---------------- */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const clean = text.replace(/\(.*?\)/g,"").trim();
+  const u = new SpeechSynthesisUtterance(clean);
+  const voices = window.speechSynthesis.getVoices();
+  const frVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("fr"));
+  if(frVoice) u.voice = frVoice;
+  u.lang = "fr-FR";
+  u.rate = 0.82;
+  u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+document.addEventListener("click", e=>{
+  const b = e.target.closest(".speak-btn, .mini-speak");
+  if(b && b.dataset.text) speak(b.dataset.text);
+  const vb = e.target.closest("#voice-directions-btn");
+  if(vb) speakDirections();
+});
+function speakDirections(){
+  if(!('speechSynthesis' in window) || !window.__lastSteps) return;
+  window.speechSynthesis.cancel();
+  const voices = window.speechSynthesis.getVoices();
+  const frVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("fr"));
+  window.__lastSteps.forEach(text=>{
+    const u = new SpeechSynthesisUtterance(text);
+    if(frVoice) u.voice = frVoice;
+    u.lang = "fr-FR"; u.rate = 0.95; u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  });
+}
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+/* ---------------- CARTE OPENSTREETMAP (Leaflet) ---------------- */
+const map = L.map('map', {
+  scrollWheelZoom:false,
+  rotate:true, bearing:0, rotateControl:false, touchRotate:true, shiftKeyRotate:true
+}).setView([14.6,-14.6], 7);
+
+const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:'&copy; contributeurs OpenStreetMap · routage OSRM (FOSSGIS)',
+  maxZoom:18
+}).addTo(map);
+
+// Fond satellite : imagerie Esri World Imagery (gratuite, libre d'usage avec attribution).
+// Note : les tuiles satellite « Google » brutes ne sont pas une API publique officielle
+// et leur usage hors des produits Google n'est pas garanti dans la durée — Esri est
+// l'équivalent standard, ouvert et fiable pour ce type d'usage.
+const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution:'Imagerie &copy; Esri, Maxar, Earthstar Geographics',
+  maxZoom:18
+});
+
+L.control.layers({
+  "🗺️ Plan (OpenStreetMap)": streetLayer,
+  "🛰️ Satellite (Esri)": satelliteLayer
+}, null, {position:"topright", collapsed:true}).addTo(map);
+
+/* ---------------- ROTATION 360° DE LA CARTE ---------------- */
+const rotateSlider = document.getElementById("rotate-slider");
+const rotateValue = document.getElementById("rotate-value");
+function setMapBearing(deg){
+  if(typeof map.setBearing === "function"){
+    try{ map.setBearing(deg); }catch(e){ /* plugin de rotation indisponible */ }
+  }
+  rotateValue.textContent = `${Math.round(deg)}°N`;
+}
+rotateSlider.addEventListener("input", ()=> setMapBearing(parseInt(rotateSlider.value,10)));
+document.getElementById("rotate-reset").addEventListener("click", ()=>{
+  rotateSlider.value = 0;
+  setMapBearing(0);
+});
+
+const markerById = {};
+CITIES.forEach(c=>{
+  const m = L.circleMarker([c.lat, c.lon], {
+    radius:5, color:"#fffaf1", weight:1.5, fillColor:"#2a3660", fillOpacity:0.95
+  }).addTo(map);
+  let popupHtml = `<b>${c.name}</b><br><span style="font-size:12px;color:#8a7c5c;">Région de ${c.region}</span>`;
+  if(c.communes && c.communes.length){
+    popupHtml += `<div class="pc-communes"><b>Communes :</b> ${c.communes.slice(0,6).join(", ")}${c.communes.length>6?"…":""}</div>`;
+  }
+  if(c.lieux && c.lieux.length){
+    popupHtml += `<div class="pc-communes"><b>À voir :</b> ${c.lieux.join(", ")}</div>`;
+  }
+  popupHtml += `<div class="pc-communes"><b>Transport :</b> ${OPERATORS_BY_REGION[c.region]||"Sept-places, cars rapides"}</div>`;
+  m.bindPopup(popupHtml);
+  markerById[c.id] = m;
+});
+
+function resetMarkerStyles(){
+  CITIES.forEach(c=>{
+    markerById[c.id].setStyle({radius:5, fillColor:"#2a3660", weight:1.5});
+  });
+}
+
+let routeLayer = null, animMarker = null, animFrame = null, startPin = null, endPin = null;
+function clearRoute(){
+  if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; }
+  if(animMarker){ map.removeLayer(animMarker); animMarker=null; }
+  if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
+  if(startPin){ map.removeLayer(startPin); startPin=null; }
+  if(endPin){ map.removeLayer(endPin); endPin=null; }
+}
+function drawRouteOnMap(dep, arr, color, dash, icon, latlngsOverride){
+  clearRoute();
+  const latlngs = latlngsOverride || [[dep.lat,dep.lon],[arr.lat,arr.lon]];
+  routeLayer = L.polyline(latlngs, {color, weight:4, dashArray:dash, lineCap:"round"}).addTo(map);
+  map.fitBounds(routeLayer.getBounds(), {padding:[50,50]});
+
+  const startIcon = L.divIcon({html:'<div style="font-size:22px;transform:translate(-50%,-100%);">📍</div>', className:"", iconSize:[0,0]});
+  const endIcon = L.divIcon({html:'<div style="font-size:22px;transform:translate(-50%,-100%);">🏁</div>', className:"", iconSize:[0,0]});
+  startPin = L.marker([dep.lat,dep.lon], {icon:startIcon, interactive:false}).addTo(map);
+  endPin = L.marker([arr.lat,arr.lon], {icon:endIcon, interactive:false}).addTo(map);
+
+  const divIcon = L.divIcon({html:`<div style="font-size:20px;transform:translate(-50%,-50%);">${icon}</div>`, className:"", iconSize:[0,0]});
+  animMarker = L.marker(latlngs[0], {icon:divIcon, interactive:false}).addTo(map);
+
+  const pts = latlngs.map(p=>Array.isArray(p)?{lat:p[0],lon:p[1]}:p);
+  const segLens = []; let total=0;
+  for(let i=0;i<pts.length-1;i++){ const d=haversine(pts[i],pts[i+1]); segLens.push(d); total+=d; }
+  let start=null; const duration=3800;
+  function step(ts){
+    if(!start) start=ts;
+    const t = ((ts-start)%duration)/duration;
+    if(total<=0){ animFrame = requestAnimationFrame(step); return; }
+    const target = t*total;
+    let acc=0, seg=0;
+    for(;seg<segLens.length-1;seg++){ if(acc+segLens[seg]>=target) break; acc+=segLens[seg]; }
+    const segT = segLens[seg]>0 ? Math.min(1,(target-acc)/segLens[seg]) : 0;
+    const a=pts[seg], b=pts[Math.min(seg+1,pts.length-1)];
+    const lat = a.lat + (b.lat-a.lat)*segT;
+    const lon = a.lon + (b.lon-a.lon)*segT;
+    animMarker.setLatLng([lat,lon]);
+    animFrame = requestAnimationFrame(step);
+  }
+  animFrame = requestAnimationFrame(step);
+}
+
+/* ---------------- MODE BUTTONS ---------------- */
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(btn.classList.contains("sn-only") && !btn.classList.contains("show")) return;
+    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentMode = btn.dataset.mode;
+    if(departPoint && arrivePoint) computeRoute();
+  });
+});
+
+/* ---------------- CALCUL D'ITINÉRAIRE ---------------- */
+function haversine(a,b){
+  const R=6371;
+  const dLat=(b.lat-a.lat)*Math.PI/180;
+  const dLon=(b.lon-a.lon)*Math.PI/180;
+  const la1=a.lat*Math.PI/180, la2=b.lat*Math.PI/180;
+  const h=Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+
+// Référentiel tarifaire Sénégal : Dakar → Mbour (≈60 km) = 1 500 FCFA en transport public.
+// pied / vélo / voiture utilisent un vrai calcul d'itinéraire (OSRM/OpenStreetMap), partout dans le monde.
+const MODE_PARAMS = {
+  pied:    {speed:4.5, pricePerKm:0,  base:0,    icon:"🚶", vehicule:"à pied", urbanOnly:false, osrm:"foot"},
+  velo:    {speed:15,  pricePerKm:0,  base:0,    icon:"🚲", vehicule:"à vélo", urbanOnly:false, osrm:"bike"},
+  voiture: {speed:45,  pricePerKm:0,  base:0,    icon:"🚗", vehicule:"en voiture", urbanOnly:false, osrm:"car"},
+  car:     {speed:40,  pricePerKm:25, base:0,    icon:"🚌", vehicule:"un car interurbain / sept-place", urbanOnly:false, snOnly:true},
+  taxi:    {speed:55,  pricePerKm:80, base:300,  icon:"🚕", vehicule:"un taxi (à négocier)", urbanOnly:false, snOnly:true},
+  brt:     {speed:28,  pricePerKm:0,  base:450,  icon:"🚏", vehicule:"le BRT (SunuBRT)", urbanOnly:true, snOnly:true},
+  ter:     {speed:55,  pricePerKm:0,  base:1500, icon:"🚆", vehicule:"le TER", urbanOnly:true, snOnly:true},
+  urbain:  {speed:18,  pricePerKm:0,  base:200,  icon:"🚐", vehicule:"un bus urbain (Dakar Dem Dikk / Tata)", urbanOnly:true, snOnly:true},
+};
+
+function formatDuration(hours){
+  const totalMin = Math.round(hours*60);
+  const h = Math.floor(totalMin/60);
+  const m = totalMin%60;
+  if(h===0) return `${m} min`;
+  return `${h} h ${m.toString().padStart(2,"0")}`;
+}
+function formatDistance(km){
+  const m = km*1000;
+  if(m < 950) return `${Math.max(10,Math.round(m/10)*10)} m`;
+  if(km < 10) return `${km.toFixed(1)} km`;
+  return `${Math.round(km)} km`;
+}
+function maneuverText(m){
+  const typeMap = {depart:"Départ :", arrive:"Arrivée :", turn:"Tournez", "new name":"Continuez sur", roundabout:"Au rond-point, prenez", "roundabout turn":"Au rond-point, prenez", merge:"Rejoignez", fork:"À l'embranchement, prenez", "end of road":"En fin de route, prenez", continue:"Continuez sur", "on ramp":"Prenez la bretelle", "off ramp":"Sortez par la bretelle"};
+  let base = typeMap[m.type] || "Continuez sur";
+  if(m.modifier){
+    const modMap = {left:"à gauche", right:"à droite", straight:"tout droit", "slight left":"légèrement à gauche", "slight right":"légèrement à droite", "sharp left":"fortement à gauche", "sharp right":"fortement à droite", uturn:"demi-tour"};
+    const mod = modMap[m.modifier];
+    if(mod && ["turn","fork","end of road","roundabout","roundabout turn"].includes(m.type)) base += " " + mod;
+  }
+  return base;
+}
+
+function renderResults({dep, arr, distKm, durationHOverride, p, isReal, steps}){
+  const resultsEl = document.getElementById("results");
+  const durationH = durationHOverride!==undefined ? durationHOverride : (distKm / p.speed) * (currentMode==="pied"?1:1.15);
+  const price = Math.round((p.base + distKm*p.pricePerKm)/50)*50;
+
+  const modeLabel = {pied:"à pied", velo:"à vélo", voiture:"en voiture", car:"en car", taxi:"en taxi", brt:"en BRT", ter:"en TER", urbain:"en bus urbain"}[currentMode];
+  const phrase = MODE_PHRASE[currentMode] || MODE_PHRASE.pied;
+
+  let priceDisplay="—", priceLab="n.d.";
+  if(currentMode==="pied" || currentMode==="velo"){ priceDisplay="gratuit"; priceLab="coût"; }
+  else if(p.snOnly){ priceDisplay=price.toLocaleString("fr-FR"); priceLab="FCFA est."; }
+  else { priceDisplay="n.d."; priceLab="hors référentiel"; }
+
+  let warn = "";
+  if(!isReal && (currentMode==="pied"||currentMode==="velo"||currentMode==="voiture")){
+    warn += `<div class="warn">Itinéraire routier en cours de calcul (OSRM/OpenStreetMap)… estimation à vol d'oiseau en attendant.</div>`;
+  }
+  if(currentMode==="pied" && distKm>25){
+    warn += `<div class="warn">${Math.round(distKm)} km à pied représente plusieurs jours de marche — envisagez le vélo ou la voiture.</div>`;
+  }
+  if(p.urbanOnly && !(dep.region==="Dakar" && arr.region==="Dakar")){
+    warn += `<div class="warn">${p.vehicule.replace(/^\S+\s/,"")} ne dessert pas directement ce trajet (réseau limité à l'agglomération de Dakar) — estimation indicative seulement.</div>`;
+  }
+
+  let stepsHtml = "";
+  if(steps && steps.length){
+    const relevant = steps.filter(s=>s.maneuver).slice(0,-1).filter(s=>s.distance>3);
+    if(relevant.length){
+      window.__lastSteps = relevant.map(s=>`${maneuverText(s.maneuver)} ${s.name && s.name.length ? s.name : "tout droit"}, sur ${formatDistance(s.distance/1000)}.`);
+      stepsHtml = `<div class="turn-steps">
+        <div class="turn-steps-head"><b>🧭 Étapes détaillées (${relevant.length})</b><button class="voice-directions-btn" id="voice-directions-btn">🔊 Écouter les directions</button></div>
+        <ol>${relevant.slice(0,15).map(s=>{
+        const name = s.name && s.name.length ? s.name : "voie sans nom";
+        return `<li>${maneuverText(s.maneuver)} <b>${esc(name)}</b> — ${formatDistance(s.distance/1000)}</li>`;
+      }).join("")}</ol></div>`;
+    }
+  }
+
+  resultsEl.innerHTML = `
+    <div class="stat-row">
+      <div class="stat"><div class="num">${formatDistance(distKm)}</div><div class="lab">distance ${isReal?"réelle":"estimée"}</div></div>
+      <div class="stat"><div class="num">${formatDuration(durationH)}</div><div class="lab">durée est.</div></div>
+      <div class="stat"><div class="num">${priceDisplay}</div><div class="lab">${priceLab}</div></div>
+    </div>
+    <ul class="steps">
+      <li>
+        <div class="step-ic">📍</div>
+        <div class="step-txt">
+          <b>Départ — ${esc(dep.label)}</b>
+          ${dep.fullLabel ? `<p>${esc(dep.fullLabel)}</p>` : ""}
+        </div>
+      </li>
+      <li>
+        <div class="step-ic">${p.icon}</div>
+        <div class="step-txt">
+          <b>Trajet ${modeLabel}</b>
+          <p>${isReal ? "Itinéraire réel, en suivant les rues et chemins (données OpenStreetMap)" : "Estimation à vol d'oiseau"} — ${formatDuration(durationH)}.</p>
+          <span class="phrase-tag">🗣️ ${phrase.wolof}<button class="mini-speak" data-text="${esc(phrase.wolof)}" title="Écouter">🔊</button></span>
+        </div>
+      </li>
+      <li>
+        <div class="step-ic">🏁</div>
+        <div class="step-txt">
+          <b>Arrivée — ${esc(arr.label)}</b>
+          ${arr.fullLabel ? `<p>${esc(arr.fullLabel)}</p>` : ""}
+        </div>
+      </li>
+    </ul>
+    ${stepsHtml}
+    ${warn}
+  `;
+}
+
+async function computeRoute(){
+  const resultsEl = document.getElementById("results");
+  if(!departPoint || !arrivePoint){
+    resultsEl.innerHTML = `<div class="result-empty">Choisissez un départ et une arrivée : tapez une adresse ou un lieu (n'importe où dans le monde), utilisez 📍 pour votre position, ou l'accès rapide Sénégal 👆</div>`;
+    return;
+  }
+  const dep = departPoint, arr = arrivePoint;
+  const distKmStraight = haversine(dep, arr);
+  if(distKmStraight < 0.005){
+    resultsEl.innerHTML = `<div class="result-empty">Départ et arrivée sont au même endroit — choisissez deux points différents.</div>`;
+    clearRoute(); return;
+  }
+
+  const bothSenegal = isInSenegal(dep) && isInSenegal(arr);
+  document.querySelectorAll(".mode-btn.sn-only").forEach(b=>b.classList.toggle("show", bothSenegal));
+  if(MODE_PARAMS[currentMode].snOnly && !bothSenegal){
+    currentMode = "pied";
+    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.toggle("active", b.dataset.mode==="pied"));
+  }
+  const p = MODE_PARAMS[currentMode];
+
+  renderResults({dep, arr, distKm:distKmStraight, p, isReal:false});
+
+  resetMarkerStyles();
+  if(dep.deptId && markerById[dep.deptId]) markerById[dep.deptId].setStyle({radius:8, fillColor:"#c0512e", weight:2});
+  if(arr.deptId && markerById[arr.deptId]) markerById[arr.deptId].setStyle({radius:8, fillColor:"#c0512e", weight:2});
+
+  const dash = currentMode==="pied" ? "2 7" : currentMode==="car" ? "10 6" : null;
+  const strokeColor = {pied:"#3c6e49", velo:"#2f7d5c", voiture:"#2a3660", car:"#e8a233", taxi:"#c0512e", brt:"#2f7d5c", ter:"#2a3660", urbain:"#8a5a2e"}[currentMode];
+  drawRouteOnMap(dep, arr, strokeColor, dash, p.icon);
+
+  currentDestination = arr;
+  document.getElementById("track-btn").disabled = false;
+
+  if(p.osrm){
+    try{
+      const routeKind = {foot:"routed-foot/route/v1/foot", bike:"routed-bike/route/v1/bike", car:"routed-car/route/v1/driving"}[p.osrm];
+      const url = `https://routing.openstreetmap.de/${routeKind}/${dep.lon},${dep.lat};${arr.lon},${arr.lat}?overview=full&geometries=geojson&steps=true`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if(data.code==="Ok" && data.routes && data.routes[0]){
+        const route = data.routes[0];
+        const distKmReal = route.distance/1000;
+        const durationHReal = route.duration/3600;
+        const coords = route.geometry.coordinates.map(c=>[c[1],c[0]]);
+        renderResults({dep, arr, distKm:distKmReal, durationHOverride:durationHReal, p, isReal:true, steps:route.legs[0].steps});
+        drawRouteOnMap(dep, arr, strokeColor, null, p.icon, coords);
+      }
+    }catch(e){
+      // Silencieux : l'estimation à vol d'oiseau déjà affichée reste visible.
+    }
+  }
+}
+
+document.getElementById("go-btn").addEventListener("click", computeRoute);
+
+/* ---------------- LEXIQUE : onglets + lecture audio ---------------- */
+const lexGrid = document.getElementById("lex-grid");
+function renderLex(lang){
+  lexGrid.innerHTML = LEXIQUE[lang].map(block=>`
+    <div class="lex-card">
+      <h3>${block.cat}</h3>
+      ${block.rows.map(r=>`
+        <div class="lex-row">
+          <span class="lex-fr">${r[0]}</span>
+          <span class="lex-local-wrap">
+            <span class="lex-local-col">
+              <span class="lex-local">${r[1]}</span>
+              <span class="lex-phon">/ ${r[2]} /</span>
+            </span>
+            <button class="speak-btn" data-text="${esc(r[2])}" title="Écouter la prononciation">🔊</button>
+          </span>
+        </div>`).join("")}
+    </div>
+  `).join("");
+}
+renderLex(currentLang);
+
+document.querySelectorAll(".lang-tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".lang-tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentLang = tab.dataset.lang;
+    renderLex(currentLang);
+  });
+});
+
+/* ---------------- TABLEAU TRANSPORT RÉGIONAL ---------------- */
+const REGION_CAPITAL_IDS = ["thies","diourbel","fatick","kaolack","kaffrine","louga","stlouis","matam","tamba","kedougou","kolda","sedhiou","ziguinchor"];
+const dakarRef = CITIES.find(c=>c.id==="dakar");
+const regionTbody = document.getElementById("region-table-body");
+regionTbody.innerHTML = REGION_CAPITAL_IDS.map(id=>{
+  const c = CITIES.find(x=>x.id===id);
+  const dist = haversine(dakarRef, c);
+  const bp = MODE_PARAMS.car;
+  const dur = dist / bp.speed * 1.15;
+  const cost = Math.round((bp.base + dist*bp.pricePerKm)/50)*50;
+  return `<tr>
+    <td><b>${c.region}</b></td>
+    <td class="num">${Math.round(dist)} km</td>
+    <td class="num">${formatDuration(dur)}</td>
+    <td class="num">${cost.toLocaleString("fr-FR")} FCFA</td>
+    <td class="op">${OPERATORS_BY_REGION[c.region]||"Sept-places, cars rapides"}</td>
+  </tr>`;
+}).join("");
+
+/* ---------------- SPLASH SCREEN ---------------- */
+window.addEventListener("load", ()=>{
+  setTimeout(()=>{
+    document.getElementById("splash").classList.add("hide");
+  }, 900);
+});
+
+/* ---------------- NAVIGATION : un écran à la fois (façon app native) ---------------- */
+const navLinks = document.querySelectorAll(".app-nav a");
+const SCREEN_GROUPS = {
+  apropos: ["apropos"],
+  itineraire: ["itineraire"],
+  carte: ["carte"],
+  transports: ["transports","transports-regions"],
+  lexique: ["lexique"],
+  discussion: ["discussion"],
+  parametres: ["parametres"],
+  confidentialite: ["confidentialite"],
+};
+const ALL_SCREEN_IDS = [...new Set(Object.values(SCREEN_GROUPS).flat())];
+
+function showScreen(target){
+  const activeIds = SCREEN_GROUPS[target] || [target];
+  ALL_SCREEN_IDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle("screen-active", activeIds.includes(id));
+  });
+  navLinks.forEach(a=>a.classList.toggle("active", a.dataset.target===target));
+  window.scrollTo({top:0, behavior:"auto"});
+  if(target==="carte" && typeof map!=="undefined"){ setTimeout(()=>map.invalidateSize(), 60); }
+  if(target==="discussion"){ loadGiscus(); }
+}
+
+navLinks.forEach(a=>{
+  a.addEventListener("click", e=>{
+    e.preventDefault();
+    showScreen(a.dataset.target);
+  });
+});
+document.querySelectorAll('a[href="#confidentialite"]').forEach(a=>{
+  a.addEventListener("click", e=>{ e.preventDefault(); showScreen("confidentialite"); });
+});
+
+showScreen("apropos");
+
+/* ---------------- GÉOLOCALISATION & GUIDE EN DIRECT ---------------- */
+let userMarker = null;
+let watchId = null;
+
+function placeUserMarker(lat, lon){
+  const icon = L.divIcon({html:'<div class="user-dot"></div>', className:"", iconSize:[16,16]});
+  if(userMarker){ userMarker.setLatLng([lat,lon]); }
+  else { userMarker = L.marker([lat,lon], {icon, zIndexOffset:1000}).addTo(map).bindPopup("Vous êtes ici"); }
+}
+
+function bearing(a,b){
+  const φ1=a.lat*Math.PI/180, φ2=b.lat*Math.PI/180;
+  const λ1=a.lon*Math.PI/180, λ2=b.lon*Math.PI/180;
+  const y=Math.sin(λ2-λ1)*Math.cos(φ2);
+  const x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+function bearingToCardinal(deg){
+  const dirs=["nord","nord-est","est","sud-est","sud","sud-ouest","ouest","nord-ouest"];
+  return dirs[Math.round(deg/45)%8];
+}
+
+const guideStatus = document.getElementById("guide-status");
+const locateBtn = document.getElementById("locate-btn");
+const trackBtn = document.getElementById("track-btn");
+
+locateBtn.addEventListener("click", ()=>{
+  if(!("geolocation" in navigator)){
+    guideStatus.innerHTML = "La géolocalisation n'est pas disponible sur cet appareil ou ce navigateur.";
+    return;
+  }
+  guideStatus.innerHTML = "Localisation en cours…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude, longitude} = pos.coords;
+    placeUserMarker(latitude, longitude);
+    map.setView([latitude, longitude], 11);
+    guideStatus.innerHTML = "Position trouvée — vous êtes affiché en bleu sur la carte.";
+  }, err=>{
+    guideStatus.innerHTML = `Localisation impossible (${err.message}). Vérifiez que vous avez autorisé l'accès à la position, et que la page est ouverte en HTTPS.`;
+  }, {enableHighAccuracy:true, timeout:10000});
+});
+
+trackBtn.addEventListener("click", function(){
+  if(watchId){
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    trackBtn.classList.remove("active");
+    trackBtn.textContent = "🧭 Suivre mon trajet en direct";
+    guideStatus.innerHTML = "Suivi en direct arrêté.";
+    return;
+  }
+  if(!currentDestination){ guideStatus.innerHTML = "Calculez d'abord un itinéraire."; return; }
+  if(!("geolocation" in navigator)){ guideStatus.innerHTML = "La géolocalisation n'est pas disponible."; return; }
+
+  trackBtn.classList.add("active");
+  trackBtn.textContent = "⏹️ Arrêter le suivi";
+  guideStatus.innerHTML = "Recherche de votre position…";
+
+  let lastVoiceAt = 0;
+  watchId = navigator.geolocation.watchPosition(pos=>{
+    const {latitude, longitude} = pos.coords;
+    placeUserMarker(latitude, longitude);
+    const here = {lat:latitude, lon:longitude};
+    const distLeft = haversine(here, currentDestination);
+    const dir = bearingToCardinal(bearing(here, currentDestination));
+    const voiceOn = document.getElementById("voice-guide-toggle").checked;
+    if(distLeft < 0.3){
+      guideStatus.innerHTML = `🏁 Vous êtes arrivé près de <b>${currentDestination.label}</b> !`;
+      if(voiceOn && Date.now()-lastVoiceAt>8000){ speak(`Vous êtes arrivé près de ${currentDestination.label}.`); lastVoiceAt=Date.now(); }
+    } else {
+      const distTxt = distLeft < 1 ? `${Math.round(distLeft*1000)} m` : `${distLeft.toFixed(1)} km`;
+      guideStatus.innerHTML = `<b>${distTxt}</b> restants jusqu'à ${currentDestination.label}, en direction du <b>${dir}</b>.`;
+      if(voiceOn && Date.now()-lastVoiceAt>20000){
+        speak(`${distTxt} restants, direction ${dir}.`);
+        lastVoiceAt = Date.now();
+      }
+    }
+  }, err=>{
+    guideStatus.innerHTML = `Suivi interrompu : ${err.message}`;
+    trackBtn.classList.remove("active");
+    trackBtn.textContent = "🧭 Suivre mon trajet en direct";
+    watchId = null;
+  }, {enableHighAccuracy:true, maximumAge:5000, timeout:15000});
+});
+
+/* ---------------- INSTALLATION (PWA) ---------------- */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+});
+document.getElementById("install-btn").addEventListener("click", async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  } else {
+    alert("Pour installer Ñu Déem : ouvrez le menu de votre navigateur puis choisissez « Ajouter à l'écran d'accueil » (mobile) ou « Installer l'application » (icône dans la barre d'adresse, sur ordinateur). Cette option s'active automatiquement une fois la page hébergée en ligne.");
+  }
+});
+
+/* ---------------- DISCUSSION (Giscus / GitHub Discussions) ---------------- */
+// Aucun backend propre à Ñu Déem : ce module s'appuie sur Giscus (gratuit),
+// qui affiche les discussions d'un dépôt GitHub public. Tant que le créateur
+// n'a pas renseigné son dépôt ci-dessous, seul le message d'explication s'affiche.
+const GISCUS_CONFIG = {
+  repo: "",        // ex: "mamadoudiouf/nudeem-senegal"
+  repoId: "",
+  category: "General",
+  categoryId: "",
+};
+let giscusLoaded = false;
+function loadGiscus(){
+  if(giscusLoaded) return;
+  const container = document.getElementById("giscus-container");
+  if(!GISCUS_CONFIG.repo || !GISCUS_CONFIG.repoId || !GISCUS_CONFIG.categoryId){
+    container.innerHTML = `<p style="font-size:12.5px;color:#a3966f;">Discussion pas encore activée par le créateur de l'application.</p>`;
+    return;
+  }
+  giscusLoaded = true;
+  const s = document.createElement("script");
+  s.src = "https://giscus.app/client.js";
+  s.setAttribute("data-repo", GISCUS_CONFIG.repo);
+  s.setAttribute("data-repo-id", GISCUS_CONFIG.repoId);
+  s.setAttribute("data-category", GISCUS_CONFIG.category);
+  s.setAttribute("data-category-id", GISCUS_CONFIG.categoryId);
+  s.setAttribute("data-mapping", "pathname");
+  s.setAttribute("data-theme", "light");
+  s.setAttribute("data-lang", "fr");
+  s.crossOrigin = "anonymous";
+  s.async = true;
+  container.appendChild(s);
+}
+
+/* ---------------- PARAMÈTRES LOCAUX (enregistrés sur cet appareil uniquement) ---------------- */
+const SETTINGS_KEY = "nudeem_settings_v1";
+const DEFAULT_SETTINGS = {
+  foreword: document.getElementById("foreword-editable").textContent,
+  refPrice: 1500,   // FCFA pour Dakar → Mbour, sert de référence au tarif du car
+  taxiBase: MODE_PARAMS.taxi.base,
+};
+
+function loadSettings(){
+  try{
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? {...DEFAULT_SETTINGS, ...JSON.parse(raw)} : {...DEFAULT_SETTINGS};
+  }catch(e){ return {...DEFAULT_SETTINGS}; }
+}
+function applySettings(s){
+  document.getElementById("foreword-editable").textContent = s.foreword;
+  MODE_PARAMS.car.pricePerKm = s.refPrice / 60; // 60 km ≈ distance Dakar–Mbour
+  MODE_PARAMS.taxi.base = s.taxiBase;
+  document.getElementById("set-foreword").value = s.foreword;
+  document.getElementById("set-refprice").value = s.refPrice;
+  document.getElementById("set-taxibase").value = s.taxiBase;
+}
+applySettings(loadSettings());
+
+document.getElementById("settings-save").addEventListener("click", ()=>{
+  const s = {
+    foreword: document.getElementById("set-foreword").value.trim() || DEFAULT_SETTINGS.foreword,
+    refPrice: parseFloat(document.getElementById("set-refprice").value) || DEFAULT_SETTINGS.refPrice,
+    taxiBase: parseFloat(document.getElementById("set-taxibase").value) || DEFAULT_SETTINGS.taxiBase,
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  applySettings(s);
+  const status = document.getElementById("settings-status");
+  status.textContent = "Enregistré sur cet appareil ✓ (les autres visiteurs ne voient pas ce changement)";
+  if(departPoint && arrivePoint) computeRoute();
+  setTimeout(()=>{ status.textContent = ""; }, 5000);
+});
+document.getElementById("settings-reset").addEventListener("click", ()=>{
+  localStorage.removeItem(SETTINGS_KEY);
+  applySettings({...DEFAULT_SETTINGS});
+  document.getElementById("settings-status").textContent = "Valeurs d'origine restaurées sur cet appareil.";
+  if(departPoint && arrivePoint) computeRoute();
+});
+
+/* ---------------- premier calcul par défaut ---------------- */
+computeRoute();
+</script>
+</body>
+</html>
